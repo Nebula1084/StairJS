@@ -22,26 +22,26 @@ struct Dict;
 This data structure would provide a flexiable method to record status of 
 every object, whose key is **name of field** and value is **object structure**.
 Thus its structure is `{char* : struct Object*}`
-##Proto
-We demonstrate basic plain code as `Proto` object which is used in 
-instantiation of `Function`. And Proto would be instantiated by Interpreter
+##FuncProto
+We demonstrate basic plain code as `FuncProto` object which is used in 
+instantiation of `Function`. And FuncProto would be instantiated by Interpreter
 automatically. 
-1. Flied `type` would be filled by `Proto`.
+1. Flied `type` would be filled by `FuncProto`.
 2. And interpreter would only fill **code** with `text`.
 3. Besides **fileds** is set to be `NULL`.
 4. Especially, **outFunction** must be set to the `funtion` where we define this 
 `function`.
 5. **arguments** must be specified explicitly. We pass a list of name to 
-the `Proto` whenever instantiation of `Proto` happend.
+the `FuncProto` whenever instantiation of `FuncProto` happend.
 
 
 ##Function
 Whenever a function is invoked. A `Funtion` Object would be instantiated by 
-corresponding `Proto`.
+corresponding `FuncProto`.
 1. **type** would be set to `Function` 
 2. And **fileds** would be allocated new memory space, which 
 represented by a `pointer` to `Dict`.
-3. Copy `Proto`'s **code** to `Function`'s **code** filed.
+3. Copy `FuncProto`'s **code** to `Function`'s **code** filed.
 4. Pass **arguments** to this structure as well as **outFunction**.
 5. **This** also need to be specified, but it depends on specfic condition.
 ###Function Invocation
