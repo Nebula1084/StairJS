@@ -1,2 +1,6 @@
 *.exe
 *.o
+*.obj
+StairJS.opensdf
+StairJS.v12.suo
+StairJS.sdf

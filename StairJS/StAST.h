@@ -6,7 +6,7 @@ struct _StAST_;
 typedef struct _StAST_ StAST;
 
 struct _StAST_ {
-	
+	int blank;
 };
 
 

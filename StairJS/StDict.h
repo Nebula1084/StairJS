@@ -9,6 +9,7 @@ typedef struct _StDict_ StDict;
 
 struct _StDict_{
 	
+	int blank;
 };
 
 StDict* StDcGetObject(StDict* dict, char* name);
