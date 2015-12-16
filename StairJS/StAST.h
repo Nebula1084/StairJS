@@ -1,13 +1,13 @@
-#ifndef _ST_AST_
-#define _ST_AST_
+#ifndef __STAST__
+#define __STAST__
 
-struct _StAST_;
-
-typedef struct _StAST_ StAST;
-
-struct _StAST_ {
-	int blank;
-};
-
+typedef struct StAstNodeBody
+{
+	char token[30];
+	struct StAstNodeBody* child;
+	struct StAstNodeBody* brother;
+}*StAstNode, *StAst, StAstNodeBody;
+void printAst(StAst ast, int indentation);
+void freeAst(StAst* pStAst);
 
 #endif

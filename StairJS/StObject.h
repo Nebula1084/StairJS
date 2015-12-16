@@ -20,7 +20,6 @@ struct _StObject_{
 	char** arguments;
 	StObject* this;
 	StObject* outFunction;
-	StAST* ast;
 };
 
 #endif
