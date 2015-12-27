@@ -1,4 +1,6 @@
+from __future__ import print_function
 import ply.lex as lex
+
 # import pdb
 unsupported = (
     'abstract',
