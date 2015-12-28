@@ -1,106 +1,93 @@
+import Engine
+
+
 def primary_expression(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def identifier(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def array_literal(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def element_list(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def element_list_end_with_ex(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def object_literal(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def property_name_and_value_list(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def property_name_and_value(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def property_name(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def member_expression(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def allocation_expression(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def member_expression_part(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def call_expression(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def call_expression_part(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def arguments(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def argument_list(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def left_hand_side_expression(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def postfix_expression(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def postfix_operator(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def assignment_expression_no_in(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def assignment_operator(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def expression_no_in(ast):
-    pass
+    Engine.iterate(ast)
 
 
 def function_declaration(ast):
-    pass
-
-
-def function_expression(ast):
-    pass
-
-
-def formal_parameter_list(ast):
-    pass
-
-
-def more_formal_parameter(ast):
-    pass
-
-
-def function_body(ast):
-    pass
+    Engine.iterate(ast)
