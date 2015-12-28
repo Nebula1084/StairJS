@@ -432,15 +432,21 @@ def p_ArgumentList(p):
         p[0] = ["ArgumentList",p[1]]
 
 
-def p_LeftHandSideExpression(p):
-    """LeftHandSideExpression : CallExpression
+def p_RightHandSideExpression(p):
+    """RightHandSideExpression : CallExpression
     |   MemberExpression"""
+    p[0] = "RightHandSideExpression"
+    p[0] = list(p)
+
+def p_LeftHandSideExpression(p):
+    """LeftHandSideExpression  ::= Identifier
+    |   CallExpression MemberExpressionPart 
+    |   MemberExpression MemberExpressionPart """
     p[0] = "LeftHandSideExpression"
     p[0] = list(p)
 
-
 def p_PostfixExpression(p):
-    """PostfixExpression : LeftHandSideExpression 
+    """PostfixExpression : RightHandSideExpression 
     | PostfixExpression PostfixOperator """
     p[0] = "PostfixExpression"
     p[0] = list(p)
@@ -674,7 +680,9 @@ def p_StatementList(p):
 
 def p_VariableStatement(p):
     """VariableStatement : VAR Identifier ';' 
-    | VAR Identifier """
+    | VAR Identifier 
+    | VAR Identifier EQUAL AssignmentExpressionNoIn
+    | VAR Identifier EQUAL AssignmentExpressionNoIn ';'"""
     p[0] = "VariableStatement"
     p[0] = list(p)
     # print("VariableStatement")
@@ -806,8 +814,8 @@ def p_SourceElement(p):
     p[0] = 'SourceElement'
     p[0] = list(p)
 
-def p_error(t):
-    raise t
+# def p_error(t):
+#     raise t
 
 def printAST(p,n):
     if p != None:
@@ -822,7 +830,8 @@ def printAST(p,n):
 lex.lex()
 
 import ply.yacc as yacc
-yacc.yacc(tabmodule = 'parsetab.py',debug=0)
+yacc.yacc(debug=0)
+# yacc.yacc()
 if __name__ == '__main__':
     with open("HelloWorld.js") as file:
         ast = yacc.parse(file.read())

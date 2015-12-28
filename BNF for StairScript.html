@@ -204,7 +204,7 @@
 <td align="LEFT" valign="BASELINE"><a href="#prod59">AssignmentExpressionNoIn</a> ( "," <a href="#prod59">AssignmentExpressionNoIn</a> )*</td>
 </tr>
 <tr>
-<td align="RIGHT" valign="BASELINE"><a name="prod23">LeftHandSideExpression</a></td>
+<td align="RIGHT" valign="BASELINE"><a name="prod23">RightHandSideExpression</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
 <td align="LEFT" valign="BASELINE"><a href="#prod19">CallExpression</a></td>
 </tr>
@@ -212,9 +212,24 @@
 <td align="RIGHT" valign="BASELINE"></td>
 <td align="CENTER" valign="BASELINE">|</td>
 <td align="LEFT" valign="BASELINE"><a href="#prod13">MemberExpression</a></td>
+</tr>
+
+<tr>
+<td align="RIGHT" valign="BASELINE"><a name="prod106">LeftHandSideExpression</a></td>
+<td align="CENTER" valign="BASELINE">::=</td>
+<td align="LEFT" valign="BASELINE"><a href="#prod4">Identifier</a></td>
+</tr>
+<tr>
+<td align="RIGHT" valign="BASELINE"></td>
+<td align="CENTER" valign="BASELINE">|</td>
+<td align="LEFT" valign="BASELINE">( <a href="#prod19">CallExpression</a> <a href="#prod15">MemberExpressionPart</a> )</td>
+</tr>
+<td align="RIGHT" valign="BASELINE"></td>
+<td align="CENTER" valign="BASELINE">|</td>
+<td align="LEFT" valign="BASELINE">( <a href="#prod13">MemberExpression</a> <a href="#prod15">MemberExpressionPart</a> )</td>
 </tr><!-- 
 <tr>
-<td align="RIGHT" valign="BASELINE"><a name="prod24">LeftHandSideExpressionForIn</a></td>
+<td align="RIGHT" valign="BASELINE"><a name="prod24">RightHandSideExpressionForIn</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
 <td align="LEFT" valign="BASELINE"><a href="#prod21">CallExpressionForIn</a></td>
 </tr>
@@ -226,7 +241,7 @@
 <tr>
 <td align="RIGHT" valign="BASELINE"><a name="prod25">PostfixExpression</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
-<td align="LEFT" valign="BASELINE"><a href="#prod23">LeftHandSideExpression</a></td>
+<td align="LEFT" valign="BASELINE"><a href="#prod23">RightHandSideExpression</a></td>
 </tr>
 <tr>
 <td align="RIGHT" valign="BASELINE"></td>
@@ -471,23 +486,24 @@
 <tr>
 <td align="RIGHT" valign="BASELINE"><a name="prod9">AssignmentExpression</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
-<td align="LEFT" valign="BASELINE">( <a href="#prod23">LeftHandSideExpression</a> <a href="#prod60">AssignmentOperator</a> <a href="#prod9">AssignmentExpression</a> | <a href="#prod57">ConditionalExpression</a> )</td>
+<td align="LEFT" valign="BASELINE">( <a href="#prod23">RightHandSideExpression</a> <a href="#prod60">AssignmentOperator</a> <a href="#prod9">AssignmentExpression</a> | <a href="#prod57">ConditionalExpression</a> )</td>
 </tr> -->
 <tr>
 <td align="RIGHT" valign="BASELINE"><a name="prod59">AssignmentExpressionNoIn</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
-<td align="LEFT" valign="BASELINE">( <a href="#prod23">LeftHandSideExpression</a> <a href="#prod60">AssignmentOperator</a> <a href="#prod59">AssignmentExpressionNoIn</a> )</td>
+<td align="LEFT" valign="BASELINE">( <a href="#prod106">LeftHandSideExpression</a> <a href="#prod60">AssignmentOperator</a> <a href="#prod59">AssignmentExpressionNoIn</a> )</td>
 </tr>
 <tr>
 <td align="RIGHT" valign="BASELINE"></td>
 <td align="CENTER" valign="BASELINE">|</td>
 <td align="LEFT" valign="BASELINE"><a href="#prod56">LogicalORExpressionNoIn</a></td>
 </tr>
+
 <!-- 
 <tr>
 <td align="RIGHT" valign="BASELINE"><a name="prod59">AssignmentExpressionNoIn</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
-<td align="LEFT" valign="BASELINE">( <a href="#prod23">LeftHandSideExpression</a> <a href="#prod60">AssignmentOperator</a> <a href="#prod59">AssignmentExpressionNoIn</a> | <a href="#prod58">ConditionalExpressionNoIn</a> )</td>
+<td align="LEFT" valign="BASELINE">( <a href="#prod23">RightHandSideExpression</a> <a href="#prod60">AssignmentOperator</a> <a href="#prod59">AssignmentExpressionNoIn</a> | <a href="#prod58">ConditionalExpressionNoIn</a> )</td>
 </tr> -->
 <tr>
 <td align="RIGHT" valign="BASELINE"><a name="prod60">AssignmentOperator</a></td>
@@ -603,6 +619,11 @@
 <td align="RIGHT" valign="BASELINE"><a name="prod65">VariableStatement</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
 <td align="LEFT" valign="BASELINE">"var" <a href="#prod4">Identifier</a> ( ";" )?</td>
+</tr>
+<tr>
+<td align="RIGHT" valign="BASELINE"></td>
+<td align="CENTER" valign="BASELINE">|</td>
+<td align="LEFT" valign="BASELINE">"var" <a href="#prod4">Identifier</a> "=" <a href="#prod59">AssignmentExpressionNoIn</a>( ";" )?</td>
 </tr><!-- 
 <tr>
 <td align="RIGHT" valign="BASELINE"><a name="prod65">VariableStatement</a></td>
@@ -728,7 +749,7 @@
 <tr>
 <td align="RIGHT" valign="BASELINE"></td>
 <td align="CENTER" valign="BASELINE">|</td>
-<td align="LEFT" valign="BASELINE">( "for" "(" <a href="#prod24">LeftHandSideExpressionForIn</a> "in" <a href="#prod61">ExpressionNoIn</a> ")" <a href="#prod62">Statement</a> )</td>
+<td align="LEFT" valign="BASELINE">( "for" "(" <a href="#prod24">RightHandSideExpressionForIn</a> "in" <a href="#prod61">ExpressionNoIn</a> ")" <a href="#prod62">Statement</a> )</td>
 </tr> -->
 <!-- 
 <tr>
@@ -800,12 +821,12 @@
 <td align="RIGHT" valign="BASELINE"><a name="prod90">Finally</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
 <td align="LEFT" valign="BASELINE">"finally" <a href="#prod63">Block</a></td>
-</tr> -->
+</tr>
 <tr>
 <td align="RIGHT" valign="BASELINE"><a name="prod92">FunctionDeclaration</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
 <td align="LEFT" valign="BASELINE">"function" <a href="#prod4">Identifier</a> ( "(" ( <a href="#prod93">FormalParameterList</a> )? ")" ) <a href="#prod94">FunctionBody</a></td>
-</tr>
+</tr> -->
 <tr>
 <td align="RIGHT" valign="BASELINE"><a name="prod14">FunctionExpression</a></td>
 <td align="CENTER" valign="BASELINE">::=</td>
