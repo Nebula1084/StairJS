@@ -2,3 +2,6 @@
 *.o
 *.obj
 .idea
+*.js
+*.tmp
+__pycache__
