@@ -85,4 +85,4 @@ is presented below.
 We confine syntas of `Stair JS` restrictly. Every operand and operator must
 be sperated by `blank`. Similarily `semicolon` would split every statement.
 
-<a href="BNF for StairScript.html">BNF for StairScript</a>
+<iframe src="BNF for StairScript.html"></iframe>
