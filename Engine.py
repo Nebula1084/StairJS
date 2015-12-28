@@ -3,9 +3,11 @@ from Operator import *
 from Expression import *
 from NonTerminal import *
 
+glb = {}
+
 
 def interpret(ast):
-    program(ast)
+    program(ast, glb)
 
 
 engine = {
@@ -78,11 +80,25 @@ engine = {
 }
 
 
-def iterate(ast):
-    print(ast[0])
+def traverse(ast, this, debug=False):
+    if debug:
+        print(ast[0])
     length = len(ast)
     for i in range(1, length):
         if isinstance(ast[i], list) and ast[i][0] in engine:
-            engine[ast[i][0]](ast[i])
+            engine[ast[i][0]](ast[i], this)
         else:
-            print ast[i]
+            if debug:
+                print ast[i]
+
+
+def iterate(ast, this, debug=False):
+    if debug:
+        print(ast[0])
+    length = len(ast)
+    for i in range(1, length):
+        if isinstance(ast[i], list) and ast[i][0] in engine:
+            yield engine[ast[i][0]](ast[i], this)
+        else:
+            if debug:
+                print ast[i]

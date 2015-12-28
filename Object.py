@@ -1,12 +1,9 @@
-class Object(object):
-    INT = "int"
-    FLOAT = "float"
-    STRING = "string"
-    BOOL = "bool"
-    ARRAY = "array"
-    FUNCPROTO = "funcproto"
-    OBJECT = "object"
-    FUNCTION = "function"
-
-    def __init__(self):
-        self.fields = {}
+INT = "int"
+FLOAT = "float"
+STRING = "string"
+BOOL = "bool"
+FUNCPROTO = "funcproto"
+OBJECT = "object"
+FUNCTION = "function"
+NULL = {"type": "null"}
+UNDEFINED = {"type", "undefined"}
