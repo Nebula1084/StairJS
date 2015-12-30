@@ -5,5 +5,5 @@ BOOL = "bool"
 FUNCPROTO = "funcproto"
 OBJECT = "object"
 FUNCTION = "function"
-NULL = {"type": "null"}
-UNDEFINED = {"type", "undefined"}
+NULL = {"type": OBJECT, "value": "null"}
+UNDEFINED = {"type": "undefined"}

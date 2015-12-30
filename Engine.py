@@ -4,6 +4,7 @@ from Expression import *
 from NonTerminal import *
 
 glb = {}
+glb["this"] = glb
 
 
 def interpret(ast):
@@ -29,6 +30,7 @@ engine = {
     CallExpressionPart: call_expression_part,
     Arguments: arguments,
     ArgumentList: argument_list,
+    RightHandSideExpression: right_hand_side_expression,
     LeftHandSideExpression: left_hand_side_expression,
     PostfixExpression: postfix_expression,
     PostfixOperator: postfix_operator,
@@ -76,7 +78,7 @@ engine = {
     FunctionBody: function_body,
     Program: program,
     SourceElements: source_elements,
-    SourceElement: source_element
+    SourceElement: source_element,
 }
 
 
@@ -98,7 +100,7 @@ def iterate(ast, this, debug=False):
     length = len(ast)
     for i in range(1, length):
         if isinstance(ast[i], list) and ast[i][0] in engine:
-            yield engine[ast[i][0]](ast[i], this)
+            yield engine[ast[i][0]](ast[i], this), ast[i][0]
         else:
             if debug:
                 print ast[i]

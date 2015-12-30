@@ -1,123 +1,135 @@
 import Engine
 from Object import *
+from NonTerminal import *
 
 
-def primary_expression(ast, this):
-    print ast
-    for x in Engine.iterate(ast, this):
-        print "primary_expression:", x
+def primary_expression(ast, context):
+    for x, y in Engine.iterate(ast, context):
         return x
 
 
-def identifier(ast, this):
-    return ast[1]
+def identifier(ast, context):
+    return context[ast[1]]
 
 
-def array_literal(ast, this):
-    for x in Engine.iterate(ast, this):
-        print x
+def array_literal(ast, context):
+    for x in Engine.iterate(ast, context):
         return x
 
 
-def element_list(ast, this):
+def element_list(ast, context):
     ret = []
-    for x in Engine.iterate(ast, this):
+    for x in Engine.iterate(ast, context):
         ret.append(x)
     return ret
 
 
-def element_list_end_with_ex(ast, this):
-    Engine.traverse(ast, this)
+def element_list_end_with_ex(ast, context):
+    Engine.traverse(ast, context)
 
 
-def object_literal(ast, this):
-    Engine.traverse(ast, this)
+def object_literal(ast, context):
+    Engine.traverse(ast, context)
 
 
-def property_name_and_value_list(ast, this):
-    Engine.traverse(ast, this)
+def property_name_and_value_list(ast, context):
+    Engine.traverse(ast, context)
 
 
-def property_name_and_value(ast, this):
-    Engine.traverse(ast, this)
+def property_name_and_value(ast, context):
+    Engine.traverse(ast, context)
 
 
-def property_name(ast, this):
-    Engine.traverse(ast, this)
+def property_name(ast, context):
+    Engine.traverse(ast, context)
 
 
-def member_expression(ast, this):
-    Engine.traverse(ast, this)
+def member_expression(ast, context):
+    mem = Engine.engine[ast[1][0]](ast[1], context)
+    return mem
 
 
-def allocation_expression(ast, this):
-    Engine.traverse(ast, this)
+def allocation_expression(ast, context):
+    Engine.traverse(ast, context)
 
 
-def member_expression_part(ast, this):
-    Engine.traverse(ast, this)
+def member_expression_part(ast, context):
+    Engine.traverse(ast, context)
 
 
-def call_expression(ast, this):
-    Engine.traverse(ast, this)
+def call_expression(ast, context):
+    func_proto = Engine.engine[ast[1][0]](ast, context)
+    new_context = {"this": context}
+    print ast
+    print func_proto[1]["code"]
 
 
-def call_expression_part(ast, this):
-    Engine.traverse(ast, this)
+def call_expression_part(ast, context):
+    Engine.traverse(ast, context)
 
 
-def arguments(ast, this):
-    Engine.traverse(ast, this)
+def arguments(ast, context):
+    Engine.traverse(ast, context)
 
 
-def argument_list(ast, this):
-    Engine.traverse(ast, this)
+def argument_list(ast, context):
+    Engine.traverse(ast, context)
 
 
-def left_hand_side_expression(ast, this):
-    Engine.traverse(ast, this)
+def right_hand_side_expression(ast, context):
+    for x, y in Engine.iterate(ast, context):
+        return x
 
 
-def postfix_expression(ast, this):
-    Engine.traverse(ast, this)
+def left_hand_side_expression(ast, context):
+    for x, y in Engine.iterate(ast, context):
+        return x
 
 
-def postfix_operator(ast, this):
-    Engine.traverse(ast, this)
+def assignment_expression_no_in(ast, context):
+    if len(ast) > 2:
+        left = Engine.engine[ast[1][0]](ast[1], context)
+        right = Engine.engine[ast[3][0]](ast[3], context)
+        if isinstance(right, list):
+            left[1] = right[1]
+        else:
+            left[1] = right
+        return left[1]
+    else:
+        return Engine.engine[ast[1][0]](ast[1], context)
 
 
-def assignment_expression_no_in(ast, this):
-    Engine.traverse(ast, this)
-    return 1
+def assignment_operator(ast, context):
+    Engine.traverse(ast, context)
 
 
-def assignment_operator(ast, this):
-    Engine.traverse(ast, this)
+def expression_no_in(ast, context):
+    Engine.traverse(ast, context)
 
 
-def expression_no_in(ast, this):
-    Engine.traverse(ast, this)
+def function_declaration(ast, context):
+    Engine.traverse(ast, context)
 
 
-def function_declaration(ast, this):
-    Engine.traverse(ast, this)
+def function_expression(ast, context):
+    return {"type": FUNCPROTO, "code": ast}
 
 
-def function_expression(ast, this):
-    Engine.traverse(ast, this)
+def formal_parameter_list(ast, context):
+    Engine.traverse(ast, context)
 
 
-def formal_parameter_list(ast, this):
-    Engine.traverse(ast, this)
+def more_formal_parameter(ast, context):
+    Engine.traverse(ast, context)
 
 
-def more_formal_parameter(ast, this):
-    Engine.traverse(ast, this)
+def function_body(ast, context):
+    Engine.traverse(ast, context)
 
 
-def function_body(ast, this):
-    Engine.traverse(ast, this)
-
-
-def variable_statement(ast, this):
-    this[identifier(ast[2], this)] = UNDEFINED
+def variable_statement(ast, context):
+    var = ast[2][1]
+    if len(ast) <= 4:
+        context[var] = ["left", UNDEFINED]
+    else:
+        context[var] = ["left", assignment_expression_no_in(ast[4], context)]

@@ -575,7 +575,7 @@ def p_BitwiseANDOperator(p):
 def p_BitwiseXORExpressionNoIn(p):
     """BitwiseXORExpressionNoIn : BitwiseANDExpressionNoIn 
     | BitwiseXORExpressionNoIn BitwiseXOROperator BitwiseANDExpressionNoIn """
-    p[0] = "BitwiseORExpressionNoIn"
+    p[0] = "BitwiseXORExpressionNoIn"
     p[0] = list(p)
 
 
