@@ -17,7 +17,9 @@ if __name__ == '__main__':
             try:
                 ast = Parser.yacc.parse(statement)
                 if ast:
-                        Engine.engine["Statement"](ast,Engine.glb)
+                    ret = Engine.engine["Statement"](ast,Engine.glb)
+                    if ret is not None:
+                        print(ret)
             except Exception as e:
                 for i in e.args:
                     print(i, end=" ")

@@ -60,7 +60,7 @@ class StFunction(StObject):
             return code.__str__()
         ret = str()
         for i in range(1, len(code)):
-            ret += StFunction.code(code[i])
+            ret += StFunction.code(code[i]) + " "
         return ret
 
 

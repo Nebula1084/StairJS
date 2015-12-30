@@ -295,7 +295,7 @@ literals = "(){}[];.,?:"
 #     """ empty : """
 
 def p_error(t):
-    pass
+    raise Exception("Can't undersand token '" + t.value + "'")
 
 
 def p_Block(p):
@@ -857,7 +857,7 @@ def p_Program(p):
 #     raise t
 
 def printAST(p, n=0):
-    if p != None:
+    if p is not None:
         print('  ' * n, end='')
         if type(p) is list:
             print(p[0])
@@ -871,7 +871,7 @@ lex.lex()
 
 
 def build(start_label):
-    yacc.yacc(debug=1, start=start_label,optimize=True)
+    yacc.yacc(debug=0, start=start_label, optimize=False, tabmodule=start_label + "parsetab")
 
 
 if __name__ == '__main__':

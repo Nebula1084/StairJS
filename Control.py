@@ -15,7 +15,7 @@ controlEngine = None
 
 
 def statement(ast, context):
-    controlEngine[ast[1][0]](ast[1], context)
+    return controlEngine[ast[1][0]](ast[1], context)
 
 
 def block(ast, context):
@@ -28,7 +28,7 @@ def empty_statement(ast, context):
 
 
 def expression_no_in_statement(ast, context):
-    expression_no_in(ast[1], context)
+    return expression_no_in(ast[1], context)
 
 
 def if_statement(ast, context):
