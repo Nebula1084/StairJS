@@ -95,6 +95,7 @@ reserved = {
     'new':'NEW',
     'null':'NULL',
     # 'package':'PACKAGE',
+    'print':'PRINT',
     # 'private':'PRIVATE',
     # 'protected':'PROTECTED',
     # 'public':'PUBLIC',
@@ -281,6 +282,9 @@ start = "Program"
 
 # def p_empty(p):
 #     """ empty : """
+
+def p_error(t):
+    pass
 
 def p_Block(p):
     """Block : '{' StatementList '}'
@@ -662,7 +666,8 @@ def p_Statement(p):
     |   ExpressionNoInStatement
     |   IfStatement
     |   IterationStatement
-    |   ReturnStatement"""
+    |   ReturnStatement
+    |   PrintStatement"""
     p[0] = "Statement"
     p[0] = list(p)
     # print("Statement")
@@ -757,12 +762,18 @@ def p_ReturnStatement(p):
     p[0] = list(p)
     # print("ReturnStatement")
 
-def p_FunctionDeclaration(p):
-    """FunctionDeclaration : FUNCTION Identifier '(' FormalParameterList ')' FunctionBody
-                    | FUNCTION Identifier '(' ')' FunctionBody"""
-    p[0] = 'FunctionDeclaration'
+def p_PrintStatement(p):
+    """PrintStatement : PRINT ExpressionNoIn ';'
+    | PRINT ExpressionNoIn """
+    p[0] = "PrintStatement"
     p[0] = list(p)
-    # print("FunctionDeclaration")
+
+# def p_FunctionDeclaration(p):
+#     """FunctionDeclaration : FUNCTION Identifier '(' FormalParameterList ')' FunctionBody
+#                     | FUNCTION Identifier '(' ')' FunctionBody"""
+#     p[0] = 'FunctionDeclaration'
+#     p[0] = list(p)
+#     # print("FunctionDeclaration")
 
 def p_FunctionExpression(p):
     """FunctionExpression : FUNCTION Identifier '(' FormalParameterList ')' FunctionBody
@@ -775,17 +786,19 @@ def p_FunctionExpression(p):
 
 def p_FormalParameterList(p):
     """FormalParameterList : Identifier 
-                    | FormalParameterList MoreFormalParameter"""
-    if len(p) == 3:
-        p[0] = p[1] + p[2]
+                    | FormalParameterList ',' Identifier"""
+    if len(p) == 4:
+        p[1].append(p[2])
+        p[1].append(p[3])
+        p[0] = p[1]
     else:
         p[0] = ['FormalParameterList',p[1]]
     # print("FormalParameterList")
 
-def p_MoreFormalParameter(p):
-    """MoreFormalParameter : ',' Identifier"""
-    p[0] = [p[1],p[2]]
-    # print("MoreFormalParameter")
+# def p_MoreFormalParameter(p):
+#     """MoreFormalParameter : ',' Identifier"""
+#     p[0] = [p[1],p[2]]
+#     # print("MoreFormalParameter")
 
 def p_FunctionBody(p):
     """FunctionBody : '{'  '}'
