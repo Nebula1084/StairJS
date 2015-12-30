@@ -13,14 +13,16 @@ def identifier(ast, context):
 
 
 def array_literal(ast, context):
-    for x in Engine.iterate(ast, context):
+    for x, y in Engine.iterate(ast, context):
         return x
 
 
 def element_list(ast, context):
-    ret = []
+    ret = {}
+    i = 0
     for x in Engine.iterate(ast, context):
-        ret.append(x)
+        ret[i] = x
+        i += 1
     return ret
 
 
@@ -58,10 +60,18 @@ def member_expression_part(ast, context):
 
 
 def call_expression(ast, context):
-    func_proto = Engine.engine[ast[1][0]](ast, context)
-    new_context = {"this": context}
-    print ast
-    print func_proto[1]["code"]
+    func_proto = Engine.engine[ast[1][0]](ast[1], context)
+    arguments_list = Engine.engine[ast[2][0]](ast[2], context)
+    new_context = {"this": context, "arguments": arguments_list}
+    code = func_proto[1]["code"]
+    formal_list = formal_parameter_list(code[3], context)
+    for i in range(0, len(formal_list)):
+        if i in arguments_list:
+            new_context[formal_list[i]] = arguments_list[i]
+        else:
+            new_context[formal_list[i]] = UNDEFINED
+    print new_context
+    print code
 
 
 def call_expression_part(ast, context):
@@ -69,11 +79,19 @@ def call_expression_part(ast, context):
 
 
 def arguments(ast, context):
-    Engine.traverse(ast, context)
+    if len(ast) == 3:
+        return {}
+    else:
+        return argument_list(ast[2], context)
 
 
 def argument_list(ast, context):
-    Engine.traverse(ast, context)
+    ret = {}
+    i = 0
+    for x, y in Engine.iterate(ast, context):
+        ret[i] = x
+        i += 1
+    return ret
 
 
 def right_hand_side_expression(ast, context):
@@ -116,7 +134,11 @@ def function_expression(ast, context):
 
 
 def formal_parameter_list(ast, context):
-    Engine.traverse(ast, context)
+    ret = []
+    for x in ast:
+        if isinstance(x, list):
+            ret.append(x[1])
+    return ret
 
 
 def more_formal_parameter(ast, context):
