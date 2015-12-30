@@ -21,9 +21,10 @@ if __name__ == '__main__':
                     if ret is not None:
                         print(ret)
             except Exception as e:
-                for i in e.args:
-                    print(i, end=" ")
-                print()
+                print(e)
+                # for i in e.args:
+                #     print(i, end=" ")
+                # print()
 
     else:
         with open(sys.argv[1]) as file:
