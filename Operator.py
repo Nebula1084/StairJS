@@ -95,8 +95,8 @@ def shift_expression(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print Engine.engine[ast[1][0]](ast[1], context)
-        print Engine.engine[ast[3][0]](ast[3], context)
+        print (Engine.engine[ast[1][0]](ast[1], context))
+        print (Engine.engine[ast[3][0]](ast[3], context))
 
 
 def shift_operator(ast, context):
@@ -108,8 +108,8 @@ def relational_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print Engine.engine[ast[1][0]](ast[1], context)
-        print Engine.engine[ast[3][0]](ast[3], context)
+        print(Engine.engine[ast[1][0]](ast[1], context))
+        print(Engine.engine[ast[3][0]](ast[3], context))
 
 
 def relational_no_in_operator(ast, context):
@@ -121,8 +121,8 @@ def equality_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print Engine.engine[ast[1][0]](ast[1], context)
-        print Engine.engine[ast[3][0]](ast[3], context)
+        print(ngine.engine[ast[1][0]](ast[1], context))
+        print(ngine.engine[ast[3][0]](ast[3], context))
 
 
 def equality_operator(ast, context):
@@ -134,8 +134,8 @@ def bitwise_and_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print Engine.engine[ast[1][0]](ast[1], context)
-        print Engine.engine[ast[3][0]](ast[3], context)
+        print(ngine.engine[ast[1][0]](ast[1], context))
+        print(ngine.engine[ast[3][0]](ast[3], context))
 
 
 def bitwise_and_operator(ast, context):
@@ -147,8 +147,8 @@ def bitwise_xor_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print Engine.engine[ast[1][0]](ast[1], context)
-        print Engine.engine[ast[3][0]](ast[3], context)
+        print(ngine.engine[ast[1][0]](ast[1], context))
+        print(ngine.engine[ast[3][0]](ast[3], context))
 
 
 def bitwise_xor_operator(ast, context):
@@ -160,8 +160,8 @@ def bitwise_or_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print Engine.engine[ast[1][0]](ast[1], context)
-        print Engine.engine[ast[3][0]](ast[3], context)
+        print(ngine.engine[ast[1][0]](ast[1], context))
+        print(ngine.engine[ast[3][0]](ast[3], context))
 
 
 def bitwise_or_operator(ast, context):
@@ -173,8 +173,8 @@ def logical_and_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print Engine.engine[ast[1][0]](ast[1], context)
-        print Engine.engine[ast[3][0]](ast[3], context)
+        print(ngine.engine[ast[1][0]](ast[1], context))
+        print(ngine.engine[ast[3][0]](ast[3], context))
 
 
 def logical_and_operator(ast, context):
@@ -186,8 +186,8 @@ def logical_or_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print Engine.engine[ast[1][0]](ast[1], context)
-        print Engine.engine[ast[3][0]](ast[3], context)
+        print(ngine.engine[ast[1][0]](ast[1], context))
+        print(ngine.engine[ast[3][0]](ast[3], context))
 
 
 def logical_or_operator(ast, context):

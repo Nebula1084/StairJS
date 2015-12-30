@@ -1,4 +1,20 @@
-import Engine
+from NonTerminal import *
+from Object import *
+
+def statement_list(ast, context):
+    for i in range(1, len(ast)):
+        statement(ast[i], context)
+        if context.return_value is not None:
+            break
+    else:
+        context.return_value = UNDEFINED
+
+from Expression import expression_no_in,variable_statement
+
+controlEngine = None
+
+def statement(ast, context):
+    controlEngine[ast[1][0]](ast[1], context)
 
 
 def block(ast, context):
@@ -6,22 +22,8 @@ def block(ast, context):
         statement_list(ast[2], context)
 
 
-def statement(ast, context):
-    Engine.engine[ast[1][0]](ast[1], context)
-
-
-def statement_list(ast, context):
-    for i in range(1, len(ast)):
-        if context.return_value is not None:
-            break
-        statement(ast[i], context)
-
-
 def empty_statement(ast, context):
     pass
-
-
-from Expression import expression_no_in
 
 
 def expression_no_in_statement(ast, context):
@@ -37,7 +39,7 @@ def if_statement(ast, context):
 
 
 def iteration_statement(ast, context):
-    Engine.eigen[ast[1][0]](ast[1], context)
+    controlEngine[ast[1][0]](ast[1], context)
 
 
 def do_statement(ast, context):
@@ -86,16 +88,35 @@ def print_statement(ast, context):
 
 
 def program(ast, context):
-    source_elements(ast[1], context)
+    statement_list(ast[1], context)
 
 
-def source_elements(ast, context):
-    for i in range(1, len(ast)):
-        source_element(ast[i], context)
+# def source_elements(ast, context):
+#     for i in range(1, len(ast)):
+#         source_element(ast[i], context)
 
 
-def source_element(ast, context):
-    statement(ast[1], context)
+# def source_element(ast, context):
+#     statement(ast[1], context)
+
+
+controlEngine = {
+    Block: block,
+    VariableStatement: variable_statement,
+    EmptyStatement: empty_statement,
+    ExpressionNoInStatement: expression_no_in_statement,
+    IfStatement: if_statement,
+    IterationStatement: iteration_statement,
+    DoStatement: do_statement,
+    WhileStatement: while_statement,
+    OriginForStatement: origin_for_statement,
+    ForEachStatement: for_each_statement,
+    ReturnStatement: return_statement,
+    PrintStatement: print_statement
+}
+
+
+    
 
 
 def main():

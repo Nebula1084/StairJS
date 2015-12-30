@@ -802,32 +802,32 @@ def p_FormalParameterList(p):
 
 def p_FunctionBody(p):
     """FunctionBody : '{'  '}'
-                    | '{' SourceElements '}'"""
+                    | '{' StatementList '}'"""
     p[0] = 'FunctionBody'
     p[0] = list(p)
     # print("FunctionBody")
 
 
 def p_Program(p):
-    """Program : SourceElements"""
+    """Program : StatementList"""
     p[0] = ["Program",p[1]]
 
 
-def p_SourceElements(p):
-    """SourceElements : SourceElement
-                    | SourceElements SourceElement"""
-    if len(p) == 3:
-        p[1].append(p[2])
-        p[0] = p[1]
-    else :
-        p[0] = ['SourceElements',p[1]]
+# def p_SourceElements(p):
+#     """SourceElements : SourceElement
+#                     | SourceElements SourceElement"""
+#     if len(p) == 3:
+#         p[1].append(p[2])
+#         p[0] = p[1]
+#     else :
+#         p[0] = ['SourceElements',p[1]]
 
 
-def p_SourceElement(p):
-    """SourceElement : Statement"""
-            # |   FunctionDeclaration
-    p[0] = 'SourceElement'
-    p[0] = list(p)
+# def p_SourceElement(p):
+#     """SourceElement : Statement"""
+#             # |   FunctionDeclaration
+#     p[0] = 'SourceElement'
+#     p[0] = list(p)
 
 # def p_error(t):
 #     raise t

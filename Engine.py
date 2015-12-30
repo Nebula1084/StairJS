@@ -72,15 +72,15 @@ engine = {
     OriginForStatement: origin_for_statement,
     ForEachStatement: for_each_statement,
     ReturnStatement: return_statement,
+    PrintStatement: print_statement,
     FunctionDeclaration: function_declaration,
     FunctionExpression: function_expression,
     FormalParameterList: formal_parameter_list,
     MoreFormalParameter: more_formal_parameter,
     FunctionBody: function_body,
     Program: program,
-    SourceElements: source_elements,
-    SourceElement: source_element,
-    PrintStatement: print_statement
+    # SourceElements: source_elements,
+    # SourceElement: source_element,
 }
 
 
@@ -93,7 +93,7 @@ def traverse(ast, this, debug=False):
             engine[ast[i][0]](ast[i], this)
         else:
             if debug:
-                print ast[i]
+                print(ast[i])
 
 
 def iterate(ast, this, debug=False):
@@ -105,4 +105,4 @@ def iterate(ast, this, debug=False):
             yield engine[ast[i][0]](ast[i], this), ast[i][0]
         else:
             if debug:
-                print ast[i]
+                print(ast[i])

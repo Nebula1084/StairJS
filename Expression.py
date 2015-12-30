@@ -1,6 +1,7 @@
 from NonTerminal import *
 from Object import *
 import Engine
+from Control import statement_list
 
 
 def primary_expression(ast, context):
@@ -31,6 +32,9 @@ def element_list_end_with_ex(ast, context):
 
 
 def object_literal(ast, context):
+    # obj = new StObject()
+    # if len(ast) == 4:
+    #     property_name_and_value();
     Engine.traverse(ast, context)
 
 
@@ -157,9 +161,6 @@ def formal_parameter_list(ast, context):
 
 def more_formal_parameter(ast, context):
     Engine.traverse(ast, context)
-
-
-from Control import statement_list
 
 
 def function_body(ast, context):
