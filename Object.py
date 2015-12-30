@@ -5,13 +5,21 @@ BOOL = "bool"
 FUNCPROTO = "funcproto"
 OBJECT = "object"
 FUNCTION = "function"
-NULL = {"type": OBJECT, "value": "null"}
-UNDEFINED = {"type": "undefined"}
 
 
 class StObject(dict):
     def __init__(self):
         super(StObject, self).__init__()
+
+
+class Undefined(object):
+    def __init__(self):
+        pass
+
+
+class StNull(StObject):
+    def __init__(self):
+        super(StNull, self).__init__()
 
 
 class StFunction(StObject):

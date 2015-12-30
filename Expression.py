@@ -2,6 +2,7 @@ import Engine
 from Object import *
 from Control import *
 from NonTerminal import *
+import Parser
 
 
 def primary_expression(ast, context):
@@ -62,20 +63,24 @@ def member_expression_part(ast, context):
 
 def call_expression(ast, context):
     func_proto = Engine.engine[ast[1][0]](ast[1], context)
-    arguments_list = Engine.engine[ast[2][0]](ast[2], context)
+    arguments_list = arguments(ast[2], context)
     new_ar = StActiveRecord()
     new_ar.this = context
     new_ar["arugments"] = arguments_list
 
-    code = func_proto[1]["code"]
+    code = func_proto[0].ast
     formal_list = formal_parameter_list(code[3], context)
     for i in range(0, len(formal_list)):
         if i in arguments_list:
             new_ar[formal_list[i]] = arguments_list[i]
         else:
-            new_ar[formal_list[i]] = UNDEFINED
-    print new_ar
-    print code
+            new_ar[formal_list[i]] = Undefined()
+    func_body = None
+    for x in code:
+        if isinstance(x, list) and x[0] == FunctionBody:
+            func_body = x
+            break
+    function_body(func_body, new_ar)
 
 
 def call_expression_part(ast, context):
@@ -113,10 +118,10 @@ def assignment_expression_no_in(ast, context):
         left = Engine.engine[ast[1][0]](ast[1], context)
         right = Engine.engine[ast[3][0]](ast[3], context)
         if isinstance(right, list):
-            left[1] = right[1]
+            left[0] = right[0]
         else:
-            left[1] = right
-        return left[1]
+            left[0] = right
+        return left[0]
     else:
         return Engine.engine[ast[1][0]](ast[1], context)
 
@@ -134,7 +139,9 @@ def function_declaration(ast, context):
 
 
 def function_expression(ast, context):
-    return {"type": FUNCPROTO, "code": ast}
+    func_proto = StFunction()
+    func_proto.ast = ast
+    return func_proto
 
 
 def formal_parameter_list(ast, context):
@@ -150,12 +157,13 @@ def more_formal_parameter(ast, context):
 
 
 def function_body(ast, context):
-    return statement_list(ast, context)
+    ret = statement_list(ast, context)
+    return context.return_value
 
 
 def variable_statement(ast, context):
     var = ast[2][1]
     if len(ast) <= 4:
-        context[var] = ["left", UNDEFINED]
+        context[var] = [Undefined]
     else:
-        context[var] = ["left", assignment_expression_no_in(ast[4], context)]
+        context[var] = [assignment_expression_no_in(ast[4], context)]
