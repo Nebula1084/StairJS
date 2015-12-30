@@ -245,6 +245,8 @@ def more_formal_parameter(ast, context):
 
 def function_body(ast, context):
     ret = statement_list(ast[2], context)
+    if ret == None:
+        ret = UNDEFINED
     return context.return_value
 
 

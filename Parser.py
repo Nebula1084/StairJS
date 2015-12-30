@@ -1,5 +1,6 @@
 from __future__ import print_function
 import ply.lex as lex
+import ply.yacc as yacc
 
 # import pdb
 unsupported = (
@@ -54,23 +55,23 @@ unsupported = (
     'yield'
 )
 reserved = {
-#     'abstract':'ABSTRACT',
-#     'arguments':'ARGUMENTS',
-#     'boolean':'BOOLEAN',
-#     'break':'BREAK',
-#     'byte':'BYTE',
-#     'case':'CASE',
-#     'catch':'CATCH',
-#     'char':'CHAR',
-#     'class':'CLASS',
-#     'const':'CONST',
-#     'continue':'CONTINUE',
-#     'debugger':'DEBUGGER',
-#     'default':'DEFAULT',
-    'delete':'DELETE',
-    'do':'DO',
+    #     'abstract':'ABSTRACT',
+    #     'arguments':'ARGUMENTS',
+    #     'boolean':'BOOLEAN',
+    #     'break':'BREAK',
+    #     'byte':'BYTE',
+    #     'case':'CASE',
+    #     'catch':'CATCH',
+    #     'char':'CHAR',
+    #     'class':'CLASS',
+    #     'const':'CONST',
+    #     'continue':'CONTINUE',
+    #     'debugger':'DEBUGGER',
+    #     'default':'DEFAULT',
+    'delete': 'DELETE',
+    'do': 'DO',
     # 'double':'DOUBLE',
-    'else':'ELSE',
+    'else': 'ELSE',
     # 'enum':'ENUM',
     # 'eval':'EVAL',
     # 'export':'EXPORT',
@@ -79,43 +80,43 @@ reserved = {
     # 'final':'FINAL',
     # 'finally':'FINALLY',
     # 'float':'FLOAT',
-    'for':'FOR',
-    'function':'FUNCTION',
+    'for': 'FOR',
+    'function': 'FUNCTION',
     # 'goto':'GOTO',
-    'if':'IF',
+    'if': 'IF',
     # 'implements':'IMPLEMENTS',
     # 'import':'IMPORT',
-    'in':'IN',
-    'instanceof':'INSTANCEOF',
+    'in': 'IN',
+    'instanceof': 'INSTANCEOF',
     # 'int':'INT',
     # 'interface':'INTERFACE',
     # 'let':'LET',
     # 'long':'LONG',
     # 'native':'NATIVE',
-    'new':'NEW',
-    'null':'NULL',
+    'new': 'NEW',
+    'null': 'NULL',
     # 'package':'PACKAGE',
-    'print':'PRINT',
+    'print': 'PRINT',
     # 'private':'PRIVATE',
     # 'protected':'PROTECTED',
     # 'public':'PUBLIC',
-    'return':'RETURN',
+    'return': 'RETURN',
     # 'short':'SHORT',
     # 'static':'STATIC',
     # 'super':'SUPER',
     # 'switch':'SWITCH',
     # 'synchronized':'SYNCHRONIZED',
-    'this':'THIS',
+    'this': 'THIS',
     # 'throw':'THROW',
     # 'throws':'THROWS',
     # 'transient':'TRANSIENT',
     # 'true':'TRUE',
     # 'try':'TRY',
-    'typeof':'TYPEOF',
-    'var':'VAR',
-    'void':'VOID',
+    'typeof': 'TYPEOF',
+    'var': 'VAR',
+    'void': 'VOID',
     # 'volatile':'VOLATILE',
-    'while':'WHILE',
+    'while': 'WHILE',
     # 'with':'WITH',
     # 'yield':'YIELD'
 }
@@ -161,32 +162,35 @@ operator = [
 ]
 
 tokens = [
-    'IDENTIFIER_NAME',
-    'FLOAT_LITERAL',
-    'DECIMAL_INTEGER_LITERAL',
-    'HEX_INTEGER_LITERAL',
-    'BOOLEAN_LITERAL',
-    'STRING_LITERAL'
-    ] + list(reserved.values()) + operator
+             'IDENTIFIER_NAME',
+             'FLOAT_LITERAL',
+             'DECIMAL_INTEGER_LITERAL',
+             'HEX_INTEGER_LITERAL',
+             'BOOLEAN_LITERAL',
+             'STRING_LITERAL'
+         ] + list(reserved.values()) + operator
+
 
 def t_BOOLEAN_LITERAL(t):
     r'false|true'
     t.value = bool(t.value)
     return t
 
+
 def t_IDENTIFIER_NAME(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     if t.value in unsupported:
         raise Exception('"' + t.value + '" is Forbidden used as Identifier.')
-    t.type = reserved.get(t.value,'IDENTIFIER_NAME')    # Check for reserved words
+    t.type = reserved.get(t.value, 'IDENTIFIER_NAME')  # Check for reserved words
     return t
+
 
 t_PLUS_PLUS = r"\+\+"
 t_MINUS_MINUS = r"--"
 t_PLUS = r"\+"
 t_MINUS = r"-"
 t_BIT_WISE_NOT = r"~"
-t_NOT = r"!" 
+t_NOT = r"!"
 t_EQUAL_EQUAL = r"=="
 t_NOT_EQUAL = r"!="
 t_EQUAL_EQUAL_EQUAL = r"==="
@@ -227,11 +231,13 @@ def t_STRING_LITERAL(t):
     t.value = eval(t.value)
     return t
 
+
 def t_COMMENT(t):
     r'(//.*)|(/\*(.|\n)*\*/)'
     t.lexer.lineno += t.value.count("\n")
     pass
     # No return value. Token discarded
+
 
 def t_FLOAT_LITERAL(t):
     r'(\d+\.\d+)|(\d+e-?\d+)'
@@ -244,19 +250,23 @@ def t_DECIMAL_INTEGER_LITERAL(t):
     t.value = int(t.value)
     return t
 
+
 def t_HEX_INTEGER_LITERAL(t):
     r'0x\d+'
     t.value = int(t.value)
     return t
+
 
 # Define a rule so we can track line numbers
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
+
 # Error handling rule
 def t_error(t):
-    raise Exception("Illegal character '%s' at line %d" % (t.value[0],lexer.lineno))
+    raise Exception("Illegal character '%s' at line %d" % (t.value[0], lexer.lineno))
+
 
 # # EOF handling rule
 # def t_eof(t):
@@ -270,6 +280,7 @@ def t_error(t):
 t_ignore = ' \t\f\v'
 literals = "(){}[];.,?:"
 
+
 # if __name__ == '__main__':
 #     lex.runmain()
 
@@ -278,13 +289,14 @@ literals = "(){}[];.,?:"
 #     lexer.input(file.read())
 #     for tok in lexer:
 #         print(tok)
-start = "Program"
+
 
 # def p_empty(p):
 #     """ empty : """
 
 def p_error(t):
     pass
+
 
 def p_Block(p):
     """Block : '{' StatementList '}'
@@ -297,7 +309,7 @@ def p_Block(p):
 def p_PrimaryExpression(p):
     """PrimaryExpression : THIS
     |   ObjectLiteral
-    |   '(' ExpressionNoIn ')' 
+    |   '(' ExpressionNoIn ')'
     |   Identifier
     |   ArrayLiteral
     |   Literal
@@ -305,11 +317,12 @@ def p_PrimaryExpression(p):
     p[0] = "PrimaryExpression"
     p[0] = list(p)
 
+
 def p_Literal(p):
-    """Literal : DECIMAL_INTEGER_LITERAL 
-    | HEX_INTEGER_LITERAL 
-    | STRING_LITERAL 
-    | BOOLEAN_LITERAL 
+    """Literal : DECIMAL_INTEGER_LITERAL
+    | HEX_INTEGER_LITERAL
+    | STRING_LITERAL
+    | BOOLEAN_LITERAL
     | FLOAT_LITERAL
     | NULL """
     p[0] = "Literal"
@@ -327,6 +340,7 @@ def p_ArrayLiteral(p):
     p[0] = "ArrayLiteral"
     p[0] = list(p)
 
+
 def p_ElementList(p):
     """ElementList : ElementList_END_WITH_EX
     | ElementList_END_WITH_EX AssignmentExpressionNoIn """
@@ -334,9 +348,10 @@ def p_ElementList(p):
         p[1].append(p[2])
     p[0] = p[1]
 
+
 def p_ElementList_END_WITH_EX(p):
-    """ElementList_END_WITH_EX : AssignmentExpressionNoIn 
-    |   ',' 
+    """ElementList_END_WITH_EX : AssignmentExpressionNoIn
+    |   ','
     |   ElementList_END_WITH_EX AssignmentExpressionNoIn ','
     |   ElementList_END_WITH_EX ','"""
     if len(p) == 2:
@@ -358,14 +373,14 @@ def p_ObjectLiteral(p):
 
 
 def p_PropertyNameAndValueList(p):
-    """PropertyNameAndValueList : PropertyNameAndValue 
+    """PropertyNameAndValueList : PropertyNameAndValue
     |  PropertyNameAndValueList ',' PropertyNameAndValue """
     if len(p) == 4:
         p[1].append(p[2])
         p[1].append(p[3])
         p[0] = p[1]
     else:
-        p[0] = ["PropertyNameAndValueList",p[1]]
+        p[0] = ["PropertyNameAndValueList", p[1]]
 
 
 def p_PropertyNameAndValue(p):
@@ -385,7 +400,7 @@ def p_PropertyName(p):
 
 
 def p_MemberExpression(p):
-    """MemberExpression : PrimaryExpression 
+    """MemberExpression : PrimaryExpression
     |   AllocationExpression
     |   MemberExpression MemberExpressionPart """
     p[0] = "MemberExpression"
@@ -399,7 +414,7 @@ def p_AllocationExpression(p):
 
 
 def p_MemberExpressionPart(p):
-    """MemberExpressionPart : '[' ExpressionNoIn ']' 
+    """MemberExpressionPart : '[' ExpressionNoIn ']'
     | '.' Identifier """
     p[0] = "MemberExpressionPart"
     p[0] = list(p)
@@ -428,14 +443,14 @@ def p_Arguments(p):
 
 
 def p_ArgumentList(p):
-    """ArgumentList : AssignmentExpressionNoIn 
+    """ArgumentList : AssignmentExpressionNoIn
     | ArgumentList ',' AssignmentExpressionNoIn """
     if len(p) == 4:
         p[1].append(p[2])
         p[1].append(p[3])
         p[0] = p[1]
     else:
-        p[0] = ["ArgumentList",p[1]]
+        p[0] = ["ArgumentList", p[1]]
 
 
 def p_RightHandSideExpression(p):
@@ -444,120 +459,122 @@ def p_RightHandSideExpression(p):
     p[0] = "RightHandSideExpression"
     p[0] = list(p)
 
+
 def p_LeftHandSideExpression(p):
     """LeftHandSideExpression  ::= Identifier
-    |   CallExpression MemberExpressionPart 
+    |   CallExpression MemberExpressionPart
     |   MemberExpression MemberExpressionPart """
     p[0] = "LeftHandSideExpression"
     p[0] = list(p)
 
+
 def p_PostfixExpression(p):
-    """PostfixExpression : RightHandSideExpression 
+    """PostfixExpression : RightHandSideExpression
     | PostfixExpression PostfixOperator """
     p[0] = "PostfixExpression"
     p[0] = list(p)
 
 
 def p_PostfixOperator(p):
-    """PostfixOperator : PLUS_PLUS 
+    """PostfixOperator : PLUS_PLUS
     | MINUS_MINUS"""
     p[0] = "PostfixOperator"
     p[0] = list(p)
 
 
 def p_UnaryExpression(p):
-    """UnaryExpression : PostfixExpression 
+    """UnaryExpression : PostfixExpression
     | UnaryOperator UnaryExpression """
     p[0] = "UnaryExpression"
     p[0] = list(p)
 
 
 def p_UnaryOperator(p):
-    """UnaryOperator : DELETE 
-    | VOID 
-    | TYPEOF 
-    | PLUS_PLUS 
+    """UnaryOperator : DELETE
+    | VOID
+    | TYPEOF
+    | PLUS_PLUS
     | MINUS_MINUS
-    | PLUS 
-    | MINUS 
-    | BIT_WISE_NOT 
+    | PLUS
+    | MINUS
+    | BIT_WISE_NOT
     | NOT """
     p[0] = "UnaryOperator"
     p[0] = list(p)
 
 
 def p_MultiplicativeExpression(p):
-    """MultiplicativeExpression : UnaryExpression 
+    """MultiplicativeExpression : UnaryExpression
     | MultiplicativeExpression MultiplicativeOperator UnaryExpression """
     p[0] = "MultiplicativeExpression"
     p[0] = list(p)
 
 
 def p_MultiplicativeOperator(p):
-    """MultiplicativeOperator : MUL 
-    | DIV 
+    """MultiplicativeOperator : MUL
+    | DIV
     | MOD """
     p[0] = "MultiplicativeOperator"
     p[0] = list(p)
 
 
 def p_AdditiveExpression(p):
-    """AdditiveExpression : MultiplicativeExpression 
+    """AdditiveExpression : MultiplicativeExpression
     | AdditiveExpression AdditiveOperator MultiplicativeExpression """
     p[0] = "AdditiveExpression"
     p[0] = list(p)
 
 
 def p_AdditiveOperator(p):
-    """AdditiveOperator : PLUS 
+    """AdditiveOperator : PLUS
     | MINUS """
     p[0] = "AdditiveOperator"
     p[0] = list(p)
 
 
 def p_ShiftExpression(p):
-    """ShiftExpression : AdditiveExpression 
+    """ShiftExpression : AdditiveExpression
     | ShiftExpression ShiftOperator AdditiveExpression """
     p[0] = "ShiftExpression"
     p[0] = list(p)
 
 
 def p_ShiftOperator(p):
-    """ShiftOperator : SHIFT_LEFT 
-    | SHIFT_RIGHT_ARITHMATIC 
+    """ShiftOperator : SHIFT_LEFT
+    | SHIFT_RIGHT_ARITHMATIC
     | SHIFT_RIGHT_LOGIC """
     p[0] = "ShiftOperator"
     p[0] = list(p)
 
 
 def p_RelationalExpressionNoIn(p):
-    """RelationalExpressionNoIn : ShiftExpression 
+    """RelationalExpressionNoIn : ShiftExpression
     | RelationalExpressionNoIn RelationalNoInOperator ShiftExpression """
     p[0] = "RelationalExpressionNoIn"
     p[0] = list(p)
 
 
 def p_RelationalNoInOperator(p):
-    """RelationalNoInOperator : LESS_THAN 
-    | GREAT_THAN 
-    | LESS_EQUAL_THAN 
-    | GREAT_EQUAL_THAN 
+    """RelationalNoInOperator : LESS_THAN
+    | GREAT_THAN
+    | LESS_EQUAL_THAN
+    | GREAT_EQUAL_THAN
     | INSTANCEOF """
     p[0] = "RelationalNoInOperator"
     p[0] = list(p)
 
 
 def p_EqualityExpressionNoIn(p):
-    """EqualityExpressionNoIn : RelationalExpressionNoIn 
+    """EqualityExpressionNoIn : RelationalExpressionNoIn
     | EqualityExpressionNoIn EqualityOperator RelationalExpressionNoIn """
     p[0] = "EqualityExpressionNoIn"
     p[0] = list(p)
 
 
 def p_EqualityOperator(p):
-    """EqualityOperator : EQUAL_EQUAL 
-    | NOT_EQUAL 
-    | EQUAL_EQUAL_EQUAL 
+    """EqualityOperator : EQUAL_EQUAL
+    | NOT_EQUAL
+    | EQUAL_EQUAL_EQUAL
     | NOT_EQUAL_EQUAL """
     p[0] = "EqualityOperator"
     p[0] = list(p)
@@ -577,7 +594,7 @@ def p_BitwiseANDOperator(p):
 
 
 def p_BitwiseXORExpressionNoIn(p):
-    """BitwiseXORExpressionNoIn : BitwiseANDExpressionNoIn 
+    """BitwiseXORExpressionNoIn : BitwiseANDExpressionNoIn
     | BitwiseXORExpressionNoIn BitwiseXOROperator BitwiseANDExpressionNoIn """
     p[0] = "BitwiseXORExpressionNoIn"
     p[0] = list(p)
@@ -590,7 +607,7 @@ def p_BitwiseXOROperator(p):
 
 
 def p_BitwiseORExpressionNoIn(p):
-    """BitwiseORExpressionNoIn : BitwiseXORExpressionNoIn 
+    """BitwiseORExpressionNoIn : BitwiseXORExpressionNoIn
     | BitwiseORExpressionNoIn BitwiseOROperator BitwiseXORExpressionNoIn """
     p[0] = "BitwiseORExpressionNoIn"
     p[0] = list(p)
@@ -603,7 +620,7 @@ def p_BitwiseOROperator(p):
 
 
 def p_LogicalANDExpressionNoIn(p):
-    """LogicalANDExpressionNoIn : BitwiseORExpressionNoIn 
+    """LogicalANDExpressionNoIn : BitwiseORExpressionNoIn
     | LogicalANDExpressionNoIn LogicalANDOperator BitwiseORExpressionNoIn """
     p[0] = "LogicalANDExpressionNoIn"
     p[0] = list(p)
@@ -616,7 +633,7 @@ def p_LogicalANDOperator(p):
 
 
 def p_LogicalORExpressionNoIn(p):
-    """LogicalORExpressionNoIn : LogicalANDExpressionNoIn 
+    """LogicalORExpressionNoIn : LogicalANDExpressionNoIn
     | LogicalORExpressionNoIn LogicalOROperator LogicalANDExpressionNoIn """
     p[0] = "LogicalORExpressionNoIn"
     p[0] = list(p)
@@ -635,29 +652,29 @@ def p_AssignmentExpressionNoIn(p):
     p[0] = list(p)
 
 
-
 def p_AssignmentOperator(p):
     """AssignmentOperator : EQUAL
     | MUL_EQUAL
     | DIV_EQUAL
     | MOD_EQUAL
-    | PLUS_EQUAL 
-    | MINUS_EQUAL 
+    | PLUS_EQUAL
+    | MINUS_EQUAL
     | SHIFT_LEFT_EQUAL
-    | SHIFT_RIGHT_ARITHMATIC_EQUAL 
-    | SHIFT_RIGHT_LOGIC_EQUAL 
-    | AND_EQUAL 
-    | XOR_EUQAL 
+    | SHIFT_RIGHT_ARITHMATIC_EQUAL
+    | SHIFT_RIGHT_LOGIC_EQUAL
+    | AND_EQUAL
+    | XOR_EUQAL
     | OR_EUQAL"""
     p[0] = "AssignmentOperator"
     p[0] = list(p)
 
 
 def p_ExpressionNoIn(p):
-    """ExpressionNoIn : AssignmentExpressionNoIn 
+    """ExpressionNoIn : AssignmentExpressionNoIn
     | ExpressionNoIn ',' AssignmentExpressionNoIn"""
     p[0] = "ExpressionNoIn"
     p[0] = list(p)
+
 
 def p_Statement(p):
     """Statement : Block
@@ -682,12 +699,12 @@ def p_StatementList(p):
     else:
         p[0] = "StatementList"
         p[0] = list(p)
-    # print("StatementList")
+        # print("StatementList")
 
 
 def p_VariableStatement(p):
-    """VariableStatement : VAR Identifier ';' 
-    | VAR Identifier 
+    """VariableStatement : VAR Identifier ';'
+    | VAR Identifier
     | VAR Identifier EQUAL AssignmentExpressionNoIn
     | VAR Identifier EQUAL AssignmentExpressionNoIn ';'"""
     p[0] = "VariableStatement"
@@ -709,8 +726,9 @@ def p_ExpressionNoInStatement(p):
     p[0] = list(p)
     # print("ExpressionNoInStatement")
 
+
 def p_IfStatement(p):
-    """IfStatement : IF '(' ExpressionNoIn ')' Statement ELSE Statement 
+    """IfStatement : IF '(' ExpressionNoIn ')' Statement ELSE Statement
     | IF '(' ExpressionNoIn ')' Statement """
     p[0] = "IfStatement"
     p[0] = list(p)
@@ -728,7 +746,7 @@ def p_IterationStatement(p):
 
 
 def p_DoStatement(p):
-    """DoStatement : DO Statement WHILE '(' ExpressionNoIn ')' ';' 
+    """DoStatement : DO Statement WHILE '(' ExpressionNoIn ')' ';'
     | DO Statement WHILE '(' ExpressionNoIn ')' """
     p[0] = "DoStatement"
     p[0] = list(p)
@@ -748,25 +766,29 @@ def p_OriginForStatement(p):
     p[0] = list(p)
     # print("OriginForStatement")
 
+
 def p_ForEachStatement(p):
     """ForEachStatement : FOR '(' VAR Identifier IN ExpressionNoIn ')' Statement"""
     p[0] = 'ForEachStatement'
     p[0] = list(p)
 
+
 def p_ReturnStatement(p):
-    """ReturnStatement : RETURN ExpressionNoIn ';' 
-    | RETURN ExpressionNoIn 
-    | RETURN ';' 
+    """ReturnStatement : RETURN ExpressionNoIn ';'
+    | RETURN ExpressionNoIn
+    | RETURN ';'
     | RETURN"""
     p[0] = "ReturnStatement"
     p[0] = list(p)
     # print("ReturnStatement")
+
 
 def p_PrintStatement(p):
     """PrintStatement : PRINT ExpressionNoIn ';'
     | PRINT ExpressionNoIn """
     p[0] = "PrintStatement"
     p[0] = list(p)
+
 
 # def p_FunctionDeclaration(p):
 #     """FunctionDeclaration : FUNCTION Identifier '(' FormalParameterList ')' FunctionBody
@@ -784,16 +806,18 @@ def p_FunctionExpression(p):
     p[0] = list(p)
     # print("FunctionExpression")
 
+
 def p_FormalParameterList(p):
-    """FormalParameterList : Identifier 
+    """FormalParameterList : Identifier
                     | FormalParameterList ',' Identifier"""
     if len(p) == 4:
         p[1].append(p[2])
         p[1].append(p[3])
         p[0] = p[1]
     else:
-        p[0] = ['FormalParameterList',p[1]]
-    # print("FormalParameterList")
+        p[0] = ['FormalParameterList', p[1]]
+        # print("FormalParameterList")
+
 
 # def p_MoreFormalParameter(p):
 #     """MoreFormalParameter : ',' Identifier"""
@@ -810,7 +834,7 @@ def p_FunctionBody(p):
 
 def p_Program(p):
     """Program : StatementList"""
-    p[0] = ["Program",p[1]]
+    p[0] = ["Program", p[1]]
 
 
 # def p_SourceElements(p):
@@ -832,22 +856,26 @@ def p_Program(p):
 # def p_error(t):
 #     raise t
 
-def printAST(p,n=0):
+def printAST(p, n=0):
     if p != None:
-        print('  '*n,end = '')
+        print('  ' * n, end='')
         if type(p) is list:
             print(p[0])
             for node in p[1:]:
-                printAST(node,n+1)
+                printAST(node, n + 1)
         else:
             print(p)
 
+
 lex.lex()
 
-import ply.yacc as yacc
-yacc.yacc(debug=0)
-# yacc.yacc()
+
+def build(start_label):
+    yacc.yacc(debug=0, start=start_label)
+
+
 if __name__ == '__main__':
+    build("Program")
     with open("HelloWorld.js") as file:
         ast = yacc.parse(file.read())
         printAST(ast)

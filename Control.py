@@ -7,8 +7,6 @@ def statement_list(ast, context):
         statement(ast[i], context)
         if context.return_value is not None:
             break
-    else:
-        context.return_value = UNDEFINED
 
 
 from Expression import expression_no_in, variable_statement
@@ -21,7 +19,7 @@ def statement(ast, context):
 
 
 def block(ast, context):
-    if len(ast) == 3:
+    if len(ast) == 4:
         statement_list(ast[2], context)
 
 

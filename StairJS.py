@@ -1,7 +1,28 @@
 import Parser
 import Engine
+import sys
 
 if __name__ == '__main__':
-    with open("HelloWorld.js") as file:
-        ast = Parser.yacc.parse(file.read())
-        Engine.interpret(ast)
+    if len(sys.argv) == 1:
+        Parser.build("Statement")
+        while True:
+            statement = input(">>>")
+            if statement.strip() == "exit":
+                break
+            while True:
+                line = input("...")
+                if line == "":
+                    break
+                statement += line
+                print()
+            ast = Parser.yacc.parse(statement)
+            Engine.engine["Statement"](ast,Engine.glb)
+    else:
+        with open(sys.argv[1]) as file:
+            Parser.build("Program")
+            ast = Parser.yacc.parse(file.read())
+            argv = Engine.StObject()
+            for i in range(1, len(sys.argv)):
+                argv[i-1] = sys.argv[i]
+            Engine.glb["argv"] = Engine.StRef(argv)
+            Engine.interpret(ast)
