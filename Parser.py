@@ -832,7 +832,7 @@ def p_Program(p):
 # def p_error(t):
 #     raise t
 
-def printAST(p,n):
+def printAST(p,n=0):
     if p != None:
         print('  '*n,end = '')
         if type(p) is list:
@@ -850,4 +850,4 @@ yacc.yacc(debug=0)
 if __name__ == '__main__':
     with open("HelloWorld.js") as file:
         ast = yacc.parse(file.read())
-        printAST(list(ast),0)
+        printAST(ast)

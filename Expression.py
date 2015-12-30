@@ -32,22 +32,28 @@ def element_list_end_with_ex(ast, context):
 
 
 def object_literal(ast, context):
-    # obj = new StObject()
-    # if len(ast) == 4:
-    #     property_name_and_value();
-    Engine.traverse(ast, context)
+    obj = StObject()
+    if len(ast) == 4:
+        property_name_and_value_list(ast[2],context,obj);
+    print(obj)
+    return obj;
 
 
-def property_name_and_value_list(ast, context):
-    Engine.traverse(ast, context)
+def property_name_and_value_list(ast, context, obj):
+    for child in ast:
+        if isinstance(child, list) and child[0] == PropertyNameAndValue:
+            property_name_and_value(child, context, obj)
 
 
-def property_name_and_value(ast, context):
-    Engine.traverse(ast, context)
+def property_name_and_value(ast, context, obj):
+    obj[property_name(ast[1],context)] = [assignment_expression_no_in(ast[3],context)]
 
 
 def property_name(ast, context):
-    Engine.traverse(ast, context)
+    if isinstance(ast[1], list):
+        return ast[1][1]
+    else:
+        return ast[1]
 
 
 def member_expression(ast, context):
