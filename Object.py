@@ -58,10 +58,16 @@ class StFunction(StObject):
     def code(code):
         if not isinstance(code, list):
             return code.__str__()
-        ret = str()
-        for i in range(1, len(code)):
-            ret += StFunction.code(code[i]) + " "
-        return ret
+        ret = ""
+        if len(code) == 2:
+            return StFunction.code(code[1])
+        else:
+            for i in range(1, len(code)):
+                child = StFunction.code(code[i])
+                ret += child
+                if i != len(code) - 1:
+                    ret += " "
+            return ret
 
 
 class StActiveRecord(dict):

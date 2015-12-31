@@ -4,9 +4,10 @@ from Object import *
 
 def statement_list(ast, context):
     for i in range(1, len(ast)):
-        statement(ast[i], context)
+        ret = statement(ast[i], context)
         if context.return_value is not None:
             break
+    return ret
 
 
 from Expression import expression_no_in, variable_statement
@@ -89,7 +90,7 @@ def print_statement(ast, context):
 
 
 def program(ast, context):
-    statement_list(ast[1], context)
+    return statement_list(ast[1], context)
 
 
 # def source_elements(ast, context):

@@ -10,7 +10,7 @@ glb.outFunction = glb
 
 
 def interpret(ast):
-    program(ast, glb)
+    return program(ast, glb)
 
 
 engine = {

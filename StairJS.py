@@ -3,8 +3,26 @@ import Engine
 import sys
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        Parser.build("Statement")
+    Parser.build("Program")
+
+    if len(sys.argv) != 1:
+        if sys.argv[1] == "-i":
+            n = 2
+        else:
+            n = 1
+        with open(sys.argv[n]) as file:
+            ast = Parser.yacc.parse(file.read())
+            if ast is not None:
+                args = Engine.StObject()
+                for i in range(n, len(sys.argv)):
+                    args[i - n] = sys.argv[i]
+                Engine.glb["args"] = Engine.StRef(args)
+                Engine.interpret(ast)
+
+    if len(sys.argv) == 1 or sys.argv[1] == "-i":
+        if len(sys.argv) == 1 :
+            print("""Stair JavaScript Interpreter V1.0 \n"""
+                  """Powered by Li Qimai, Hai Jiewen, Chen Guangxiang, Cai Wuwei""")
         while True:
             statement = input(">>>")
             if statement.strip() == "exit":
@@ -14,24 +32,14 @@ if __name__ == '__main__':
                 if line == "":
                     break
                 statement += line
-            try:
-                ast = Parser.yacc.parse(statement)
-                if ast:
-                    ret = Engine.engine["Statement"](ast,Engine.glb)
-                    if ret is not None:
-                        print(ret)
-            except Exception as e:
-                print(e)
+            # try:
+            ast = Parser.yacc.parse(statement)
+            if ast:
+                ret = Engine.interpret(ast)
+                if ret is not None:
+                    print(ret)
+            # except Exception as e:
+            #     print(e)
                 # for i in e.args:
                 #     print(i, end=" ")
                 # print()
-
-    else:
-        with open(sys.argv[1]) as file:
-            Parser.build("Program")
-            ast = Parser.yacc.parse(file.read())
-            argv = Engine.StObject()
-            for i in range(1, len(sys.argv)):
-                argv[i-1] = sys.argv[i]
-            Engine.glb["argv"] = Engine.StRef(argv)
-            Engine.interpret(ast)
