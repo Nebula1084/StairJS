@@ -54,7 +54,7 @@ def multiplicative_expression(ast, context):
     if len(ast) != 4:
         ret = Engine.engine[ast[1][0]](ast[1], context)
         if isinstance(ret, list):
-            ret = ret[1]
+            ret = ret[0]
         return ret
     else:
         m1 = Engine.engine[ast[1][0]](ast[1], context)
