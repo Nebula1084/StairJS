@@ -1,5 +1,6 @@
 import Engine
 from Object import *
+from Control import *
 from NonTerminal import *
 
 
@@ -62,15 +63,18 @@ def member_expression_part(ast, context):
 def call_expression(ast, context):
     func_proto = Engine.engine[ast[1][0]](ast[1], context)
     arguments_list = Engine.engine[ast[2][0]](ast[2], context)
-    new_context = {"this": context, "arguments": arguments_list}
+    new_ar = StActiveRecord()
+    new_ar.this = context
+    new_ar["arugments"] = arguments_list
+
     code = func_proto[1]["code"]
     formal_list = formal_parameter_list(code[3], context)
     for i in range(0, len(formal_list)):
         if i in arguments_list:
-            new_context[formal_list[i]] = arguments_list[i]
+            new_ar[formal_list[i]] = arguments_list[i]
         else:
-            new_context[formal_list[i]] = UNDEFINED
-    print new_context
+            new_ar[formal_list[i]] = UNDEFINED
+    print new_ar
     print code
 
 
@@ -146,7 +150,7 @@ def more_formal_parameter(ast, context):
 
 
 def function_body(ast, context):
-    Engine.traverse(ast, context)
+    return statement_list(ast, context)
 
 
 def variable_statement(ast, context):

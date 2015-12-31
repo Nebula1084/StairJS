@@ -1,9 +1,10 @@
 from Control import *
+from Object import *
 from Operator import *
 from Expression import *
 from NonTerminal import *
 
-glb = {}
+glb = StActiveRecord()
 glb["this"] = glb
 
 
