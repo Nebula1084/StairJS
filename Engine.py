@@ -6,6 +6,7 @@ from NonTerminal import *
 
 glb = StActiveRecord()
 glb.this = glb
+glb.outFunction = glb
 
 
 def interpret(ast):

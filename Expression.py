@@ -13,7 +13,18 @@ def primary_expression(ast, context):
 
 
 def identifier(ast, context):
-    return context[ast[1]]
+    def find_out(ctxt, iden):
+        if iden in ctxt.outFunction:
+            return ctxt.outFunction[iden]
+        else:
+            return find_out(ctxt.outFunction, iden)
+
+    if ast[1] in context:
+        return context[ast[1]]
+    elif ast[1] in context.this.obj:
+        return context.this.obj[ast[1]]
+    else:
+        return find_out(context, ast[1])
 
 
 def array_literal(ast, context):
@@ -61,6 +72,8 @@ def property_name(ast, context):
 
 def member_expression(ast, context):
     mem = Engine.engine[ast[1][0]](ast[1], context)
+    if len(ast) == 3:
+        return mem.obj[member_expression_part(ast[2], context)], mem
     return mem
 
 
@@ -69,14 +82,25 @@ def allocation_expression(ast, context):
 
 
 def member_expression_part(ast, context):
-    Engine.traverse(ast, context)
+    if ast[2][0] == ExpressionNoIn:
+        return expression_no_in(ast[2], context)
+    elif ast[2][0] == Identifier:
+        return ast[2][1]
 
 
 def call_expression(ast, context):
-    func_proto = Engine.engine[ast[1][0]](ast[1], context)
-    arguments_list = arguments(ast[2], context)
     new_ar = StActiveRecord()
-    new_ar.this = context
+    member = Engine.engine[ast[1][0]](ast[1], context)  # resolve member
+    if isinstance(member, tuple):
+        new_ar.this = member[1]  # object context
+        new_ar.outFunction = context.outFunction
+        func_proto = member[0]
+    else:
+        func_proto = member
+        new_ar.this = context.this
+        new_ar.outFunction = context.outFunction
+    arguments_list = arguments(ast[2], context)
+
     new_ar["arugments"] = arguments_list
 
     code = func_proto.obj.ast
