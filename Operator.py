@@ -1,5 +1,5 @@
 import Engine
-
+from Object import *
 
 def literal(ast, context):
     return ast[1]
@@ -53,16 +53,16 @@ def unary_operator(ast, context):
 def multiplicative_expression(ast, context):
     if len(ast) != 4:
         ret = Engine.engine[ast[1][0]](ast[1], context)
-        if isinstance(ret, list):
-            ret = ret[0]
+        if isinstance(ret, StRef):
+            ret = ret.obj
         return ret
     else:
         m1 = Engine.engine[ast[1][0]](ast[1], context)
-        if isinstance(m1, list):
-            m1 = m1[1]
+        if isinstance(m1, StRef):
+            m1 = m1.obj
         m2 = Engine.engine[ast[3][0]](ast[3], context)
-        if isinstance(m2, list):
-            m2 = m2[0]
+        if isinstance(m2, StRef):
+            m2 = m2.obj
         if ast[2][1] == "*":
             return m1 * m2
         if ast[2][1] == "/":
@@ -110,6 +110,8 @@ def relational_expression_no_in(ast, context):
     else:
         print(Engine.engine[ast[1][0]](ast[1], context))
         print(Engine.engine[ast[3][0]](ast[3], context))
+        # if(ast[2][1] == "==="):
+        #     return relational_expression_no_in(ast[1]) == shift_expression(ast[3])
 
 
 def relational_no_in_operator(ast, context):

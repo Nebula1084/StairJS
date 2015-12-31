@@ -5,8 +5,11 @@ from Control import statement_list
 
 
 def primary_expression(ast, context):
-    for x, y in Engine.iterate(ast, context):
-        return x
+    pe = ast[1]
+    if isinstance(pe, list):
+        return Engine.engine[pe[0]](pe, context)
+    else:
+        return context.this
 
 
 def identifier(ast, context):
@@ -14,17 +17,18 @@ def identifier(ast, context):
 
 
 def array_literal(ast, context):
-    for x, y in Engine.iterate(ast, context):
-        return x
+    obj = StObject()
+    element_list(ast[2], context, obj)
+    return obj
 
 
-def element_list(ast, context):
-    ret = {}
+def element_list(ast, context, obj):
     i = 0
-    for x in Engine.iterate(ast, context):
-        ret[i] = x
-        i += 1
-    return ret
+    for child in ast:
+        if isinstance(child, list) and child[0] == AssignmentExpressionNoIn:
+            obj[i] = StRef(assignment_expression_no_in(child, context))
+        elif child == ',':
+            i += 1
 
 
 def element_list_end_with_ex(ast, context):
@@ -34,8 +38,8 @@ def element_list_end_with_ex(ast, context):
 def object_literal(ast, context):
     obj = StObject()
     if len(ast) == 4:
-        property_name_and_value_list(ast[2],context,obj);
-    return obj;
+        property_name_and_value_list(ast[2], context, obj)
+    return obj
 
 
 def property_name_and_value_list(ast, context, obj):
@@ -45,7 +49,7 @@ def property_name_and_value_list(ast, context, obj):
 
 
 def property_name_and_value(ast, context, obj):
-    obj[property_name(ast[1],context)] = [assignment_expression_no_in(ast[3],context)]
+    obj[property_name(ast[1], context)] = StRef(assignment_expression_no_in(ast[3], context))
 
 
 def property_name(ast, context):
@@ -75,8 +79,8 @@ def call_expression(ast, context):
     new_ar.this = context
     new_ar["arugments"] = arguments_list
 
-    code = func_proto[0].ast
-    formal_list = func_proto[0].argument_list
+    code = func_proto.obj.ast
+    formal_list = func_proto.obj.argument_list
     for i in range(0, len(formal_list)):
         if i in arguments_list:
             new_ar[formal_list[i]] = arguments_list[i]
@@ -124,11 +128,11 @@ def assignment_expression_no_in(ast, context):
     if len(ast) > 2:
         left = Engine.engine[ast[1][0]](ast[1], context)
         right = Engine.engine[ast[3][0]](ast[3], context)
-        if isinstance(right, list):
-            left[0] = right[0]
+        if isinstance(right, StRef):
+            left.obj = right.obj
         else:
-            left[0] = right
-        return left[0]
+            left.obj = right
+        return left.obj
     else:
         return Engine.engine[ast[1][0]](ast[1], context)
 
@@ -176,6 +180,6 @@ def function_body(ast, context):
 def variable_statement(ast, context):
     var = ast[2][1]
     if len(ast) <= 4:
-        context[var] = [UNDEFINED]
+        context[var] = StRef(UNDEFINED)
     else:
-        context[var] = [assignment_expression_no_in(ast[4], context)]
+        context[var] = StRef(assignment_expression_no_in(ast[4], context))

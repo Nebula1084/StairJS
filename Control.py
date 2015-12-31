@@ -1,6 +1,7 @@
 from NonTerminal import *
 from Object import *
 
+
 def statement_list(ast, context):
     for i in range(1, len(ast)):
         statement(ast[i], context)
@@ -9,9 +10,11 @@ def statement_list(ast, context):
     else:
         context.return_value = UNDEFINED
 
-from Expression import expression_no_in,variable_statement
+
+from Expression import expression_no_in, variable_statement
 
 controlEngine = None
+
 
 def statement(ast, context):
     controlEngine[ast[1][0]](ast[1], context)
@@ -114,9 +117,6 @@ controlEngine = {
     ReturnStatement: return_statement,
     PrintStatement: print_statement
 }
-
-
-    
 
 
 def main():
