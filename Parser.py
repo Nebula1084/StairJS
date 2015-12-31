@@ -871,7 +871,7 @@ lex.lex()
 
 
 def build(start_label):
-    yacc.yacc(debug=1, start=start_label,optimize=True)
+    yacc.yacc(debug=1, start=start_label,optimize=False)
 
 
 if __name__ == '__main__':

@@ -19,9 +19,10 @@ if __name__ == '__main__':
                 if ast:
                         Engine.engine["Statement"](ast,Engine.glb)
             except Exception as e:
-                for i in e.args:
-                    print(i, end=" ")
-                print()
+                print(e)
+                # for i in e.args:
+                #     print(i, end=" ")
+                # print()
 
     else:
         with open(sys.argv[1]) as file:
