@@ -14,9 +14,9 @@ if __name__ == '__main__':
                 if line == "":
                     break
                 statement += line
-                print()
             ast = Parser.yacc.parse(statement)
-            Engine.engine["Statement"](ast,Engine.glb)
+            if ast:
+                Engine.engine["Statement"](ast,Engine.glb)
     else:
         with open(sys.argv[1]) as file:
             Parser.build("Program")
