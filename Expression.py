@@ -1,8 +1,6 @@
-import Engine
-from Object import *
-from Control import *
 from NonTerminal import *
-import Parser
+from Object import *
+import Engine
 
 
 def primary_expression(ast, context):
@@ -69,7 +67,7 @@ def call_expression(ast, context):
     new_ar["arugments"] = arguments_list
 
     code = func_proto[0].ast
-    formal_list = formal_parameter_list(code[3], context)
+    formal_list = func_proto[0].argument_list
     for i in range(0, len(formal_list)):
         if i in arguments_list:
             new_ar[formal_list[i]] = arguments_list[i]
@@ -131,7 +129,7 @@ def assignment_operator(ast, context):
 
 
 def expression_no_in(ast, context):
-    Engine.traverse(ast, context)
+    return assignment_expression_no_in(ast[1], context)
 
 
 def function_declaration(ast, context):
@@ -141,6 +139,11 @@ def function_declaration(ast, context):
 def function_expression(ast, context):
     func_proto = StFunction()
     func_proto.ast = ast
+    for fpl in ast:
+        if isinstance(fpl, list) and fpl[0] == Identifier:
+            context[fpl[1]] = func_proto
+        if isinstance(fpl, list) and fpl[0] == FormalParameterList:
+            func_proto.argument_list = formal_parameter_list(fpl, context)
     return func_proto
 
 
@@ -156,14 +159,17 @@ def more_formal_parameter(ast, context):
     Engine.traverse(ast, context)
 
 
+from Control import statement_list
+
+
 def function_body(ast, context):
-    ret = statement_list(ast, context)
+    ret = statement_list(ast[2], context)
     return context.return_value
 
 
 def variable_statement(ast, context):
     var = ast[2][1]
     if len(ast) <= 4:
-        context[var] = [Undefined]
+        context[var] = [UNDEFINED]
     else:
         context[var] = [assignment_expression_no_in(ast[4], context)]

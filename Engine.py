@@ -80,6 +80,7 @@ engine = {
     Program: program,
     SourceElements: source_elements,
     SourceElement: source_element,
+    PrintStatement: print_statement
 }
 
 

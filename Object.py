@@ -17,15 +17,20 @@ class Undefined(object):
         pass
 
 
-class StNull(StObject):
+class StNull:
     def __init__(self):
-        super(StNull, self).__init__()
+        pass
+
+
+UNDEFINED = Undefined()
+NULL = StNull()
 
 
 class StFunction(StObject):
     def __init__(self):
         super(StFunction, self).__init__()
         self.ast = None  # function expression
+        self.argument_list = []
 
 
 class StActiveRecord(dict):
