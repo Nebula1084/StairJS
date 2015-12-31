@@ -1,6 +1,7 @@
 import Engine
 from Object import *
 
+
 def literal(ast, context):
     return ast[1]
 
@@ -10,11 +11,11 @@ def postfix_expression(ast, context):
         x = Engine.engine[ast[1][0]](ast[1], context)
         ret = x
         if ast[2][1] == "++":
-            ret = x[1]
-            x[1] += 1
+            ret = x.obj
+            x.obj += 1
         elif ast[2][1] == "--":
             ret = x[1]
-            x[1] -= 1
+            x.obj -= 1
         return ret
     else:
         ret = Engine.engine[ast[1][0]](ast[1], context)
@@ -123,8 +124,8 @@ def equality_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print(ngine.engine[ast[1][0]](ast[1], context))
-        print(ngine.engine[ast[3][0]](ast[3], context))
+        print(Engine.engine[ast[1][0]](ast[1], context))
+        print(Engine.engine[ast[3][0]](ast[3], context))
 
 
 def equality_operator(ast, context):
@@ -136,8 +137,8 @@ def bitwise_and_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print(ngine.engine[ast[1][0]](ast[1], context))
-        print(ngine.engine[ast[3][0]](ast[3], context))
+        print(Engine.engine[ast[1][0]](ast[1], context))
+        print(Engine.engine[ast[3][0]](ast[3], context))
 
 
 def bitwise_and_operator(ast, context):
@@ -162,8 +163,8 @@ def bitwise_or_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print(ngine.engine[ast[1][0]](ast[1], context))
-        print(ngine.engine[ast[3][0]](ast[3], context))
+        print(Engine.engine[ast[1][0]](ast[1], context))
+        print(Engine.engine[ast[3][0]](ast[3], context))
 
 
 def bitwise_or_operator(ast, context):
@@ -175,8 +176,8 @@ def logical_and_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print(ngine.engine[ast[1][0]](ast[1], context))
-        print(ngine.engine[ast[3][0]](ast[3], context))
+        print(Engine.engine[ast[1][0]](ast[1], context))
+        print(Engine.engine[ast[3][0]](ast[3], context))
 
 
 def logical_and_operator(ast, context):
@@ -188,8 +189,8 @@ def logical_or_expression_no_in(ast, context):
         ret = Engine.engine[ast[1][0]](ast[1], context)
         return ret
     else:
-        print(ngine.engine[ast[1][0]](ast[1], context))
-        print(ngine.engine[ast[3][0]](ast[3], context))
+        print(Engine.engine[ast[1][0]](ast[1], context))
+        print(Engine.engine[ast[3][0]](ast[3], context))
 
 
 def logical_or_operator(ast, context):

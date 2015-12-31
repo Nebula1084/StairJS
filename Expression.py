@@ -16,7 +16,7 @@ def identifier(ast, context):
     def find_out(ctxt, iden):
         if iden in ctxt.outFunction:
             return ctxt.outFunction[iden]
-        else:
+        elif ctxt.outFunction is not Engine.glb:
             return find_out(ctxt.outFunction, iden)
 
     if ast[1] in context:
@@ -73,12 +73,41 @@ def property_name(ast, context):
 def member_expression(ast, context):
     mem = Engine.engine[ast[1][0]](ast[1], context)
     if len(ast) == 3:
-        return mem.obj[member_expression_part(ast[2], context)], mem
+        mem_part = member_expression_part(ast[2], context)
+        if mem_part in mem.obj:
+            return mem.obj[mem_part], mem
+        else:
+            mem.obj[mem_part] = UNDEFINED
+            return mem.obj[mem_part], mem
     return mem
 
 
 def allocation_expression(ast, context):
-    Engine.traverse(ast, context)
+    obj = StObject()
+    new_ar = StActiveRecord()
+    func_proto = member_expression(ast[2], context)
+    new_ar.this = StRef(obj)
+    if isinstance(func_proto, tuple):
+        func_proto = func_proto[0]
+    new_ar.outFunction = context.outFunction
+
+    arguments_list = arguments(ast[3], context)
+    new_ar["arugments"] = arguments_list
+
+    code = func_proto.obj.ast
+    formal_list = func_proto.obj.argument_list
+    for i in range(0, len(formal_list)):
+        if i in arguments_list:
+            new_ar[formal_list[i]] = arguments_list[i]
+        else:
+            new_ar[formal_list[i]] = Undefined()
+    func_body = None
+    for x in code:
+        if isinstance(x, list) and x[0] == FunctionBody:
+            func_body = x
+            break
+    function_body(func_body, new_ar)
+    return obj
 
 
 def member_expression_part(ast, context):
@@ -115,7 +144,7 @@ def call_expression(ast, context):
         if isinstance(x, list) and x[0] == FunctionBody:
             func_body = x
             break
-    function_body(func_body, new_ar)
+    return function_body(func_body, new_ar)
 
 
 def call_expression_part(ast, context):
@@ -139,13 +168,31 @@ def argument_list(ast, context):
 
 
 def right_hand_side_expression(ast, context):
-    for x, y in Engine.iterate(ast, context):
-        return x
+    if ast[1][0] == CallExpression:
+        return call_expression(ast[1], context)
+    elif ast[1][0] == MemberExpression:
+        ret = member_expression(ast[1], context)
+        if isinstance(ret, tuple):
+            return ret[0]
+        else:
+            return ret
 
 
 def left_hand_side_expression(ast, context):
-    for x, y in Engine.iterate(ast, context):
-        return x
+    if ast[1][0] == Identifier:
+        return identifier(ast[1], context)
+    elif ast[1][0] == CallExpression:
+        mem = call_expression(ast[1], context)
+        mem_part = member_expression_part(ast[2], context)
+        if not (mem_part in mem):
+            mem[mem_part] == StRef(UNDEFINED)
+        return mem[mem_part]
+    elif ast[1][0] == MemberExpression:
+        mem = member_expression(ast[1], context)
+        mem_part = member_expression_part(ast[2], context)
+        if not (mem_part in mem.obj):
+            mem.obj[mem_part] = StRef(UNDEFINED)
+        return mem.obj[mem_part]
 
 
 def assignment_expression_no_in(ast, context):

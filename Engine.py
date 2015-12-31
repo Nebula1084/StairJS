@@ -5,7 +5,7 @@ from Expression import *
 from NonTerminal import *
 
 glb = StActiveRecord()
-glb.this = glb
+glb.this = StRef(StObject())
 glb.outFunction = glb
 
 
