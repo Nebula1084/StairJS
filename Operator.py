@@ -62,7 +62,7 @@ def multiplicative_expression(ast, context):
             m1 = m1[1]
         m2 = Engine.engine[ast[3][0]](ast[3], context)
         if isinstance(m2, list):
-            m2 = m2[1]
+            m2 = m2[0]
         if ast[2][1] == "*":
             return m1 * m2
         if ast[2][1] == "/":

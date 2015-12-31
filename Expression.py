@@ -35,7 +35,6 @@ def object_literal(ast, context):
     obj = StObject()
     if len(ast) == 4:
         property_name_and_value_list(ast[2],context,obj);
-    print(obj)
     return obj;
 
 
