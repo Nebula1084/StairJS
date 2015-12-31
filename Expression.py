@@ -77,7 +77,7 @@ def member_expression(ast, context):
         if mem_part in mem.obj:
             return mem.obj[mem_part], mem
         else:
-            mem.obj[mem_part] = UNDEFINED
+            mem.obj[mem_part] = StRef(UNDEFINED)
             return mem.obj[mem_part], mem
     return mem
 
@@ -100,7 +100,7 @@ def allocation_expression(ast, context):
         if i in arguments_list:
             new_ar[formal_list[i]] = arguments_list[i]
         else:
-            new_ar[formal_list[i]] = Undefined()
+            new_ar[formal_list[i]] = StRef(UNDEFINED)
     func_body = None
     for x in code:
         if isinstance(x, list) and x[0] == FunctionBody:
@@ -138,7 +138,7 @@ def call_expression(ast, context):
         if i in arguments_list:
             new_ar[formal_list[i]] = arguments_list[i]
         else:
-            new_ar[formal_list[i]] = Undefined()
+            new_ar[formal_list[i]] = StRef(UNDEFINED)
     func_body = None
     for x in code:
         if isinstance(x, list) and x[0] == FunctionBody:
@@ -225,7 +225,7 @@ def function_expression(ast, context):
     func_proto.ast = ast
     for fpl in ast:
         if isinstance(fpl, list) and fpl[0] == Identifier:
-            context[fpl[1]] = func_proto
+            context[fpl[1]] = StRef(func_proto)
         if isinstance(fpl, list) and fpl[0] == FormalParameterList:
             func_proto.argument_list = formal_parameter_list(fpl, context)
     return func_proto
@@ -246,7 +246,7 @@ def more_formal_parameter(ast, context):
 def function_body(ast, context):
     ret = statement_list(ast[2], context)
     if ret == None:
-        ret = UNDEFINED
+        ret = StRef(UNDEFINED)
     return context.return_value
 
 
