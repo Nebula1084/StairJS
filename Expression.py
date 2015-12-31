@@ -4,234 +4,238 @@ import Engine
 from Control import statement_list
 
 
-def primary_expression(ast, context):
-    pe = ast[1]
-    if isinstance(pe, list):
-        return Engine.engine[pe[0]](pe, context)
+def primary_expression(ast, active_record):
+    if len(ast) == 2:
+        if ast[1] == "this":
+            return None, active_record.this
+        else:
+            return Engine.engine[ast[1][0]](ast[1], active_record)
     else:
-        return context.this
+        return None, expression_no_in(ast[2], active_record)
+        # pe = ast[1]
+        # if isinstance(pe, list):
+        #     return Engine.engine[pe[0]](pe, active_record)
+        # else:
+        #     return active_record.this
 
 
-def identifier(ast, context):
-    def find_out(ctxt, iden):
-        if iden in ctxt.outFunction:
-            return ctxt.outFunction[iden]
-        elif ctxt.outFunction is not Engine.glb:
-            return find_out(ctxt.outFunction, iden)
-
-    if ast[1] in context:
-        return context[ast[1]]
-    elif ast[1] in context.this.obj:
-        return context.this.obj[ast[1]]
-    else:
-        return find_out(context, ast[1])
+def identifier(ast, active_record):
+    def find_identifier(identifier, active_record):
+        if active_record is None:
+            return Engine.glb, identifier
+        if identifier in active_record:
+            return active_record, identifier
+        else:
+            return find_identifier(identifier, active_record.outFunction)
+    return find_identifier(ast[1], active_record)
 
 
-def array_literal(ast, context):
+def array_literal(ast, active_record):
     obj = StObject()
-    element_list(ast[2], context, obj)
-    return obj
+    element_list(ast[2], active_record, obj)
+    return None, obj
 
 
-def element_list(ast, context, obj):
+def element_list(ast, active_record, obj):
     i = 0
     for child in ast:
         if isinstance(child, list) and child[0] == AssignmentExpressionNoIn:
-            obj[i] = StRef(assignment_expression_no_in(child, context))
+            obj[i] = assignment_expression_no_in(child, active_record)
         elif child == ',':
             i += 1
 
 
-def element_list_end_with_ex(ast, context):
-    Engine.traverse(ast, context)
-
-
-def object_literal(ast, context):
+def object_literal(ast, active_record):
     obj = StObject()
     if len(ast) == 4:
-        property_name_and_value_list(ast[2], context, obj)
-    return obj
+        property_name_and_value_list(ast[2], active_record, obj)
+    return None, obj
 
 
-def property_name_and_value_list(ast, context, obj):
+def property_name_and_value_list(ast, active_record, obj):
     for child in ast:
         if isinstance(child, list) and child[0] == PropertyNameAndValue:
-            property_name_and_value(child, context, obj)
+            property_name_and_value(child, active_record, obj)
 
 
-def property_name_and_value(ast, context, obj):
-    obj[property_name(ast[1], context)] = StRef(assignment_expression_no_in(ast[3], context))
+def property_name_and_value(ast, active_record, obj):
+    obj[property_name(ast[1], active_record)] = assignment_expression_no_in(ast[3], active_record)
 
 
-def property_name(ast, context):
+def property_name(ast, active_record):
     if isinstance(ast[1], list):
         return ast[1][1]
     else:
         return ast[1]
 
 
-def member_expression(ast, context):
-    mem = Engine.engine[ast[1][0]](ast[1], context)
+def member_expression(ast, active_record):
     if len(ast) == 3:
-        mem_part = member_expression_part(ast[2], context)
-        if mem_part in mem.obj:
-            return mem.obj[mem_part], mem
+        owner_of_owner, key = member_expression(ast[1], active_record)
+        if isinstance(owner_of_owner, dict):
+            owner = owner_of_owner[key]
         else:
-            mem.obj[mem_part] = StRef(UNDEFINED)
-            return mem.obj[mem_part], mem
-    return mem
+            owner = key
+        return member_expression_part(ast[2], active_record, owner)
+    else:
+        return Engine.engine[ast[1][0]](ast[1], active_record)
 
 
-def allocation_expression(ast, context):
+def allocation_expression(ast, active_record):
     obj = StObject()
-    new_ar = StActiveRecord()
-    func_proto = member_expression(ast[2], context)
-    new_ar.this = StRef(obj)
-    if isinstance(func_proto, tuple):
-        func_proto = func_proto[0]
-    new_ar.outFunction = context.outFunction
-
-    arguments_list = arguments(ast[3], context)
-    new_ar["arugments"] = arguments_list
-
-    code = func_proto.obj.ast
-    formal_list = func_proto.obj.argument_list
-    for i in range(0, len(formal_list)):
-        if i in arguments_list:
-            new_ar[formal_list[i]] = arguments_list[i]
-        else:
-            new_ar[formal_list[i]] = StRef(UNDEFINED)
-    func_body = None
-    for x in code:
-        if isinstance(x, list) and x[0] == FunctionBody:
-            func_body = x
-            break
-    function_body(func_body, new_ar)
-    return obj
-
-
-def member_expression_part(ast, context):
-    if ast[2][0] == ExpressionNoIn:
-        return expression_no_in(ast[2], context)
-    elif ast[2][0] == Identifier:
-        return ast[2][1]
-
-
-def call_expression(ast, context):
-    new_ar = StActiveRecord()
-    member = Engine.engine[ast[1][0]](ast[1], context)  # resolve member
-    if isinstance(member, tuple):
-        new_ar.this = member[1]  # object context
-        new_ar.outFunction = context.outFunction
-        func_proto = member[0]
+    owner, key = member_expression(ast[2], active_record)
+    if owner is None:
+        constructor = key
     else:
-        func_proto = member
-        new_ar.this = context.this
-        new_ar.outFunction = context.outFunction
-    arguments_list = arguments(ast[2], context)
+        constructor = owner[key]
+    if not isinstance(constructor, StFunction):
+        raise Exception(constructor + " is not callable.")
+    new_ar = StActiveRecord()
+    new_ar.this = obj
+    new_ar.outFunction = constructor.outFunction
+    arguments(ast[2], active_record, new_ar, constructor.argument_list)
+    return None, function_body(constructor.ast, new_ar)
 
-    new_ar["arugments"] = arguments_list
 
-    code = func_proto.obj.ast
-    formal_list = func_proto.obj.argument_list
-    for i in range(0, len(formal_list)):
-        if i in arguments_list:
-            new_ar[formal_list[i]] = arguments_list[i]
+def member_expression_part(ast, active_record, owner):
+    if isinstance(owner, dict):
+        if ast[1] == ".":
+            key = ast[2][1]
         else:
-            new_ar[formal_list[i]] = StRef(UNDEFINED)
-    func_body = None
-    for x in code:
-        if isinstance(x, list) and x[0] == FunctionBody:
-            func_body = x
-            break
-    return function_body(func_body, new_ar)
+            key = expression_no_in(ast[2], active_record)
+            if not (isinstance(key, str) or isinstance(key, int) or isinstance(key, float)):
+                raise Exception("Only number or string can be a key")
+        return owner, key
+    else:
+        raise Exception(str(owner) + " has no member.")
 
 
-def call_expression_part(ast, context):
-    Engine.traverse(ast, context)
+def call_expression(ast, active_record):
+    if ast[2][0] == Arguments:
+        owner, key = Engine.engine[ast[1][0]](ast[1], active_record)
+        if owner is None:
+            function = key
+        elif key in owner:
+            function = owner[key]
+        else:
+            raise Exception("'" + key + "' is not defined.")
+        if not isinstance(function, StFunction):
+            raise Exception(str(function) + " is not callable.")
+        new_ar = StActiveRecord()
+        new_ar.this = active_record.this
+        new_ar.outFunction = function.outFunction
+        arguments(ast[2], active_record, new_ar, function.argument_list)
+        return None, function_body(function.ast, new_ar)
+    else:
+        owner, ret = call_expression(ast[1], active_record)
+        return member_expression_part(ast[2], active_record, ret)
+
+#
+# def call_expression_part(ast, active_record):
+#     Engine.traverse(ast, active_record)
 
 
-def arguments(ast, context):
+def arguments(ast, active_record, new_ar, argument_names):
     if len(ast) == 3:
-        return {}
+        new_ar["arguments"] = StObject()
     else:
-        return argument_list(ast[2], context)
+        argument_list(ast[2], active_record, new_ar, argument_names)
 
 
-def argument_list(ast, context):
-    ret = {}
+def argument_list(ast, active_record, new_ar, argument_names):
+    arguments_value = StObject()
     i = 0
-    for x, y in Engine.iterate(ast, context):
-        ret[i] = x
-        i += 1
-    return ret
+    for child in ast:
+        if isinstance(child, list) and child[0] == AssignmentExpressionNoIn:
+            arg = assignment_expression_no_in(child, active_record)
+            arguments_value[i] = arg
+            if i < len(argument_names):
+                new_ar[argument_names[i]] = arg
+    new_ar["arguments"] = arguments_value
 
 
-def right_hand_side_expression(ast, context):
-    if ast[1][0] == CallExpression:
-        return call_expression(ast[1], context)
-    elif ast[1][0] == MemberExpression:
-        ret = member_expression(ast[1], context)
-        if isinstance(ret, tuple):
-            return ret[0]
+def right_hand_side_expression(ast, active_record):
+    owner, key = Engine.engine[ast[1][0]](ast[1], active_record)
+    if isinstance(owner, dict):
+        if key in owner:
+            return owner[key]
         else:
-            return ret
-
-
-def left_hand_side_expression(ast, context):
-    if ast[1][0] == Identifier:
-        return identifier(ast[1], context)
-    elif ast[1][0] == CallExpression:
-        mem = call_expression(ast[1], context)
-        mem_part = member_expression_part(ast[2], context)
-        if not (mem_part in mem):
-            mem[mem_part] == StRef(UNDEFINED)
-        return mem[mem_part]
-    elif ast[1][0] == MemberExpression:
-        mem = member_expression(ast[1], context)
-        mem_part = member_expression_part(ast[2], context)
-        if not (mem_part in mem.obj):
-            mem.obj[mem_part] = StRef(UNDEFINED)
-        return mem.obj[mem_part]
-
-
-def assignment_expression_no_in(ast, context):
-    if len(ast) > 2:
-        left = Engine.engine[ast[1][0]](ast[1], context)
-        right = Engine.engine[ast[3][0]](ast[3], context)
-        if isinstance(right, StRef):
-            left.obj = right.obj
-        else:
-            left.obj = right
-        return left.obj
+            raise Exception("'" + key + "' is not defined")
     else:
-        return Engine.engine[ast[1][0]](ast[1], context)
+        return key
 
 
-def assignment_operator(ast, context):
-    Engine.traverse(ast, context)
+def left_hand_side_expression(ast, active_record):
+    owner, key = Engine.engine[ast[1][0]](ast[1], active_record)
+    if len(ast) == 3:
+        if isinstance(owner, dict):
+            owner = owner[key]
+        else:
+            owner = key
+        owner, key = member_expression_part(ast[2], active_record, owner)
+    if isinstance(owner, dict):
+        return owner, key
+    else:
+        raise Exception(key + " can't be assignment")
 
 
-def expression_no_in(ast, context):
-    return assignment_expression_no_in(ast[1], context)
+def assignment_expression_no_in(ast, active_record):
+    if len(ast) == 2:
+        return Engine.engine[ast[1][0]](ast[1], active_record)
+    else:
+        owner, key = left_hand_side_expression(ast[1], active_record)
+        operator = assignment_operator(ast[2], active_record)
+        right_value = assignment_expression_no_in(ast[3], active_record)
+        if operator == "=":
+            owner[key] = right_value
+        elif operator == "+=":
+            owner[key] += right_value
+        elif operator == "-=":
+            owner[key] -= right_value
+        else:
+            raise Exception("Unsupport operator " + operator)
+        return right_value
+
+        # if len(ast) > 2:
+        #     left = Engine.engine[ast[1][0]](ast[1], active_record)
+        #     right = Engine.engine[ast[3][0]](ast[3], active_record)
+        #     if isinstance(right, StRef):
+        #         left.obj = right.obj
+        #     else:
+        #         left.obj = right
+        #     return left.obj
+        # else:
+        #     return Engine.engine[ast[1][0]](ast[1], active_record)
 
 
-def function_declaration(ast, context):
-    Engine.traverse(ast, context)
+def assignment_operator(ast, active_record):
+    return ast[1]
 
 
-def function_expression(ast, context):
+def expression_no_in(ast, active_record):
+    return assignment_expression_no_in(ast[1], active_record)
+
+
+#
+# def function_declaration(ast, active_record):
+#     Engine.traverse(ast, active_record)
+
+
+def function_expression(ast, active_record):
     func_proto = StFunction()
-    func_proto.ast = ast
-    for fpl in ast:
-        if isinstance(fpl, list) and fpl[0] == Identifier:
-            context[fpl[1]] = StRef(func_proto)
-        if isinstance(fpl, list) and fpl[0] == FormalParameterList:
-            func_proto.argument_list = formal_parameter_list(fpl, context)
-    return func_proto
+    func_proto.outFunction = active_record
+    for child in ast:
+        if isinstance(child, list) and child[0] == Identifier:
+            func_proto.name = child[1]
+            active_record[child[1]] = func_proto
+        if isinstance(child, list) and child[0] == FormalParameterList:
+            func_proto.argument_list = formal_parameter_list(child, active_record)
+        if isinstance(child, list) and child[0] == FunctionBody:
+            func_proto.ast = child
+    return None, func_proto
 
 
-def formal_parameter_list(ast, context):
+def formal_parameter_list(ast, active_record):
     ret = []
     for x in ast:
         if isinstance(x, list):
@@ -239,20 +243,19 @@ def formal_parameter_list(ast, context):
     return ret
 
 
-def more_formal_parameter(ast, context):
-    Engine.traverse(ast, context)
+def function_body(ast, active_record):
+    if len(ast) == 3:
+        return UNDEFINED
+    else:
+        ret = statement_list(ast[2], active_record)
+        if ret is None:
+            ret = UNDEFINED
+    return ret
 
 
-def function_body(ast, context):
-    ret = statement_list(ast[2], context)
-    if ret == None:
-        ret = StRef(UNDEFINED)
-    return context.return_value
-
-
-def variable_statement(ast, context):
+def variable_statement(ast, active_record):
     var = ast[2][1]
     if len(ast) <= 4:
-        context[var] = StRef(UNDEFINED)
+        active_record[var] = UNDEFINED
     else:
-        context[var] = StRef(assignment_expression_no_in(ast[4], context))
+        active_record[var] = assignment_expression_no_in(ast[4], active_record)

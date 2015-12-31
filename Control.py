@@ -2,12 +2,17 @@ from NonTerminal import *
 from Object import *
 
 
-def statement_list(ast, context):
-    for i in range(1, len(ast)):
-        ret = statement(ast[i], context)
-        if context.return_value is not None:
-            break
-    return ret
+def statement_list(ast, context, print_result=False):
+    if len(ast) == 2 and print_result:
+        ret = statement(ast[1], context)
+        if ret is not None:
+            print(ret)
+    else:
+        for i in range(1, len(ast)):
+            statement(ast[i], context)
+            if context.return_value is not None:
+                break
+    return context.return_value
 
 
 from Expression import expression_no_in, variable_statement
@@ -33,7 +38,7 @@ def expression_no_in_statement(ast, context):
 
 
 def if_statement(ast, context):
-    if expression_no_in(ast[2], context):
+    if expression_no_in(ast[3], context):
         statement(ast[5], context)
     else:
         if len(ast) == 8:
@@ -50,7 +55,7 @@ def do_statement(ast, context):
         if context.return_value is not None:
             break
         if not expression_no_in(ast[4], context):
-            break;
+            break
 
 
 def while_statement(ast, context):
@@ -89,8 +94,8 @@ def print_statement(ast, context):
     print(expression_no_in(ast[2], context))
 
 
-def program(ast, context):
-    return statement_list(ast[1], context)
+def program(ast, context, print_result):
+    return statement_list(ast[1], context, print_result)
 
 
 # def source_elements(ast, context):

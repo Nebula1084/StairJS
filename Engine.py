@@ -6,11 +6,10 @@ from NonTerminal import *
 
 glb = StActiveRecord()
 glb.this = glb
-glb.outFunction = glb
 
 
-def interpret(ast):
-    return program(ast, glb)
+def interpret(ast, print_result=False):
+    return program(ast, glb, print_result)
 
 
 engine = {
@@ -20,7 +19,6 @@ engine = {
     Identifier: identifier,
     ArrayLiteral: array_literal,
     ElementList: element_list,
-    ElementList_END_WITH_EX: element_list_end_with_ex,
     ObjectLiteral: object_literal,
     PropertyNameAndValueList: property_name_and_value_list,
     PropertyNameAndValue: property_name_and_value,
@@ -29,35 +27,35 @@ engine = {
     AllocationExpression: allocation_expression,
     MemberExpressionPart: member_expression_part,
     CallExpression: call_expression,
-    CallExpressionPart: call_expression_part,
+    # CallExpressionPart: call_expression_part,
     Arguments: arguments,
     ArgumentList: argument_list,
     RightHandSideExpression: right_hand_side_expression,
     LeftHandSideExpression: left_hand_side_expression,
     PostfixExpression: postfix_expression,
-    PostfixOperator: postfix_operator,
+    # PostfixOperator: postfix_operator,
     UnaryExpression: unary_expression,
-    UnaryOperator: unary_operator,
+    # UnaryOperator: unary_operator,
     MultiplicativeExpression: multiplicative_expression,
-    MultiplicativeOperator: multiplicative_operator,
+    # MultiplicativeOperator: multiplicative_operator,
     AdditiveExpression: additive_expression,
-    AdditiveOperator: additive_operator,
+    # AdditiveOperator: additive_operator,
     ShiftExpression: shift_expression,
-    ShiftOperator: shift_operator,
+    # ShiftOperator: shift_operator,
     RelationalExpressionNoIn: relational_expression_no_in,
-    RelationalNoInOperator: relational_no_in_operator,
+    # RelationalNoInOperator: relational_no_in_operator,
     EqualityExpressionNoIn: equality_expression_no_in,
-    EqualityOperator: equality_operator,
+    # EqualityOperator: equality_operator,
     BitwiseANDExpressionNoIn: bitwise_and_expression_no_in,
-    BitwiseANDOperator: bitwise_and_operator,
+    # BitwiseANDOperator: bitwise_and_operator,
     BitwiseXORExpressionNoIn: bitwise_xor_expression_no_in,
-    BitwiseXOROperator: bitwise_xor_operator,
+    # BitwiseXOROperator: bitwise_xor_operator,
     BitwiseORExpressionNoIn: bitwise_or_expression_no_in,
-    BitwiseOROperator: bitwise_or_operator,
+    # BitwiseOROperator: bitwise_or_operator,
     LogicalANDExpressionNoIn: logical_and_expression_no_in,
-    LogicalANDOperator: logical_and_operator,
+    # LogicalANDOperator: logical_and_operator,
     LogicalORExpressionNoIn: logical_or_expression_no_in,
-    LogicalOROperator: logical_or_operator,
+    # LogicalOROperator: logical_or_operator,
     AssignmentExpressionNoIn: assignment_expression_no_in,
     AssignmentOperator: assignment_operator,
     ExpressionNoIn: expression_no_in,
@@ -74,10 +72,10 @@ engine = {
     ForEachStatement: for_each_statement,
     ReturnStatement: return_statement,
     PrintStatement: print_statement,
-    FunctionDeclaration: function_declaration,
+    # FunctionDeclaration: function_declaration,
     FunctionExpression: function_expression,
     FormalParameterList: formal_parameter_list,
-    MoreFormalParameter: more_formal_parameter,
+    # MoreFormalParameter: more_formal_parameter,
     FunctionBody: function_body,
     Program: program,
     # SourceElements: source_elements,

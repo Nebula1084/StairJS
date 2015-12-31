@@ -48,8 +48,6 @@ unsupported = (
     'transient',
     'true',
     'try',
-    'typeof',
-    'void',
     'volatile',
     'with',
     'yield'
@@ -68,7 +66,7 @@ reserved = {
     #     'continue':'CONTINUE',
     #     'debugger':'DEBUGGER',
     #     'default':'DEFAULT',
-    'delete': 'DELETE',
+    # 'delete': 'DELETE',
     'do': 'DO',
     # 'double':'DOUBLE',
     'else': 'ELSE',
@@ -87,7 +85,7 @@ reserved = {
     # 'implements':'IMPLEMENTS',
     # 'import':'IMPORT',
     'in': 'IN',
-    'instanceof': 'INSTANCEOF',
+    # 'instanceof': 'INSTANCEOF',
     # 'int':'INT',
     # 'interface':'INTERFACE',
     # 'let':'LET',
@@ -422,17 +420,18 @@ def p_MemberExpressionPart(p):
 
 def p_CallExpression(p):
     """CallExpression : MemberExpression Arguments
-    | CallExpression CallExpressionPart """
+    | CallExpression Arguments
+    | CallExpression MemberExpressionPart """
     p[0] = "CallExpression"
     p[0] = list(p)
 
 
-def p_CallExpressionPart(p):
-    """CallExpressionPart : Arguments
-    |   '[' ExpressionNoIn ']'
-    |   '.' Identifier """
-    p[0] = "CallExpressionPart"
-    p[0] = list(p)
+# def p_CallExpressionPart(p):
+#     """CallExpressionPart : Arguments
+#     |   '[' ExpressionNoIn ']'
+#     |   '.' Identifier """
+#     p[0] = "CallExpressionPart"
+#     p[0] = list(p)
 
 
 def p_Arguments(p):
@@ -455,7 +454,8 @@ def p_ArgumentList(p):
 
 def p_RightHandSideExpression(p):
     """RightHandSideExpression : CallExpression
-    |   MemberExpression"""
+    |   MemberExpression
+    |   PostfixExpression"""
     p[0] = "RightHandSideExpression"
     p[0] = list(p)
 
@@ -469,7 +469,7 @@ def p_LeftHandSideExpression(p):
 
 
 def p_PostfixExpression(p):
-    """PostfixExpression : RightHandSideExpression
+    """PostfixExpression : LeftHandSideExpression PostfixOperator
     | PostfixExpression PostfixOperator """
     p[0] = "PostfixExpression"
     p[0] = list(p)
@@ -483,18 +483,15 @@ def p_PostfixOperator(p):
 
 
 def p_UnaryExpression(p):
-    """UnaryExpression : PostfixExpression
+    """UnaryExpression : RightHandSideExpression
     | UnaryOperator UnaryExpression """
     p[0] = "UnaryExpression"
     p[0] = list(p)
 
 
 def p_UnaryOperator(p):
-    """UnaryOperator : DELETE
-    | VOID
+    """UnaryOperator : VOID
     | TYPEOF
-    | PLUS_PLUS
-    | MINUS_MINUS
     | PLUS
     | MINUS
     | BIT_WISE_NOT
@@ -558,8 +555,8 @@ def p_RelationalNoInOperator(p):
     """RelationalNoInOperator : LESS_THAN
     | GREAT_THAN
     | LESS_EQUAL_THAN
-    | GREAT_EQUAL_THAN
-    | INSTANCEOF """
+    | GREAT_EQUAL_THAN """
+    # | INSTANCEOF
     p[0] = "RelationalNoInOperator"
     p[0] = list(p)
 
@@ -871,7 +868,7 @@ lex.lex()
 
 
 def build(start_label):
-    yacc.yacc(debug=0, start=start_label, optimize=False, tabmodule=start_label + "parsetab")
+    yacc.yacc(debug=1, start=start_label, optimize=False, tabmodule=start_label + "parsetab")
 
 
 if __name__ == '__main__':

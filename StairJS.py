@@ -3,8 +3,8 @@ import Engine
 import sys
 
 if __name__ == '__main__':
+    sys.setrecursionlimit(100000)
     Parser.build("Program")
-
     if len(sys.argv) != 1:
         if sys.argv[1] == "-i":
             n = 2
@@ -16,7 +16,7 @@ if __name__ == '__main__':
                 args = Engine.StObject()
                 for i in range(n, len(sys.argv)):
                     args[i - n] = sys.argv[i]
-                Engine.glb["args"] = Engine.StRef(args)
+                Engine.glb["args"] = args
                 Engine.interpret(ast)
 
     if len(sys.argv) == 1 or sys.argv[1] == "-i":
@@ -32,14 +32,15 @@ if __name__ == '__main__':
                 if line == "":
                     break
                 statement += line
-            # try:
-            ast = Parser.yacc.parse(statement)
-            if ast:
-                ret = Engine.interpret(ast)
-                if ret is not None:
-                    print(ret)
-            # except Exception as e:
-            #     print(e)
+            try:
+                ast = Parser.yacc.parse(statement)
+                if ast:
+                    ret = Engine.interpret(ast, print_result=True)
+                    if ret is not None:
+                        print(ret)
+            except Exception as e:
+                print("error: ",end="")
+                print(e)
                 # for i in e.args:
                 #     print(i, end=" ")
                 # print()
