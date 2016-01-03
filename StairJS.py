@@ -33,11 +33,12 @@ if __name__ == '__main__':
                     break
                 statement += line
             try:
-                ast = Parser.yacc.parse(statement)
-                if ast:
-                    ret = Engine.interpret(ast, print_result=True)
-                    if ret is not None:
-                        print(ret)
+                if statement != "":
+                    ast = Parser.yacc.parse(statement)
+                    if ast:
+                        ret = Engine.interpret(ast, print_result=True)
+                        if ret is not None:
+                            print(ret)
             except Exception as e:
                 print("error: ",end="")
                 print(e)
