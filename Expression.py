@@ -89,7 +89,7 @@ def allocation_expression(ast, active_record):
     else:
         constructor = owner[key]
     if not isinstance(constructor, StFunction):
-        raise Exception(constructor + " is not callable.")
+        raise Exception(str(constructor) + " is not callable.")
     new_ar = StActiveRecord()
     new_ar.this = obj
     new_ar.outFunction = constructor.outFunction
@@ -118,7 +118,7 @@ def call_expression(ast, active_record):
         elif key in owner:
             function = owner[key]
         else:
-            raise Exception("'" + key + "' is not defined.")
+            raise Exception("'" + str(key) + "' is not defined.")
         if not isinstance(function, StFunction):
             raise Exception(str(function) + " is not callable.")
         new_ar = StActiveRecord()
@@ -160,7 +160,7 @@ def right_hand_side_expression(ast, active_record):
         if key in owner:
             return owner[key]
         else:
-            raise Exception("'" + key + "' is not defined")
+            raise Exception("'" + str(key) + "' is not defined")
     else:
         return key
 
@@ -176,7 +176,7 @@ def left_hand_side_expression(ast, active_record):
     if isinstance(owner, dict):
         return owner, key
     else:
-        raise Exception(key + " can't be assignment")
+        raise Exception(str(key) + " can't be assignment")
 
 
 def assignment_expression_no_in(ast, active_record):
