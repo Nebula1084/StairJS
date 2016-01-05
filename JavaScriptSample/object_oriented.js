@@ -8,7 +8,7 @@ a = {
 }
 
 
-function person(){
+function person(){//can run as a member function
     this.name = "Tom"
     this.age = 3
     this.talk = function (){

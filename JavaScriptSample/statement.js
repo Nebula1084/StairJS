@@ -33,5 +33,5 @@ print ""
 //             return n * f(n-1)
 //         };
 //     }
-//     f(5)
+//     print f(5)
 // }

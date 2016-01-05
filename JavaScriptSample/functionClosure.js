@@ -9,11 +9,11 @@ function adderGenerator(inc){
 // }
 
 // function cut(a){
-//     print "Cut " + a
+//     return "A Cut " + a
 // }
 
 // function boil(a){
-//     print "Boil " + a
+//     return "A Boiled " + a
 // }
 
 

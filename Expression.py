@@ -123,7 +123,7 @@ def call_expression(ast, active_record):
     if ast[2][0] == Arguments:
         owner, key = Engine.engine[ast[1][0]](ast[1], active_record)
         if owner is None:
-            raise Exception("Function must in some dict")
+            function = key
         elif key in owner:
             function = owner[key]
         else:
@@ -131,10 +131,15 @@ def call_expression(ast, active_record):
         if not isinstance(function, StFunction):
             raise Exception(str(function) + " is not callable.")
         new_ar = StActiveRecord()
-        if owner is active_record:
-            new_ar.this = owner.this
-        else:
+        if owner is None:
+            new_ar.this = active_record.this
+        elif isinstance(owner, StActiveRecord):
+            new_ar.this = active_record.this
+        elif isinstance(owner, StObject):
             new_ar.this = owner
+        else:
+            raise Exception("function's owner is wrong.")
+
         new_ar.outFunction = function.outFunction
         arguments(ast[2], active_record, new_ar, function.argument_list)
         return None, function_body(function.ast, new_ar)
