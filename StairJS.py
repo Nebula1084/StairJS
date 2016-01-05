@@ -17,16 +17,23 @@ if __name__ == '__main__':
                 for i in range(n, len(sys.argv)):
                     args[i - n] = sys.argv[i]
                 Engine.glb["args"] = args
-                Engine.interpret(ast)
+                try:
+                    Engine.interpret(ast)
+                except Exception as e:
+                    print("error: ", end="")
+                    print(e)
+                    sys.exit(1)
 
     if len(sys.argv) == 1 or sys.argv[1] == "-i":
-        if len(sys.argv) == 1 :
+        if len(sys.argv) == 1:
             print("""Stair JavaScript Interpreter V1.0 \n"""
                   """Powered by Li Qimai, Hai Jiewen, Chen Guangxiang, Cai Wuwei""")
         while True:
             statement = input(">>>")
             if statement.strip() == "exit":
                 break
+            if statement.strip() == "":
+                continue
             while True:
                 line = input("...")
                 if line == "":
@@ -40,7 +47,7 @@ if __name__ == '__main__':
                         if ret is not None:
                             print(ret)
             except Exception as e:
-                print("error: ",end="")
+                print("error: ", end="")
                 print(e)
                 # for i in e.args:
                 #     print(i, end=" ")

@@ -54,7 +54,7 @@ def do_statement(ast, context):
         statement(ast[2], context)
         if context.return_value is not None:
             break
-        if not expression_no_in(ast[4], context):
+        if not expression_no_in(ast[5], context):
             break
 
 

@@ -263,7 +263,7 @@ def t_newline(t):
 
 # Error handling rule
 def t_error(t):
-    raise Exception("Illegal character '%s' at line %d" % (t.value[0], lexer.lineno))
+    raise Exception("Illegal character '%s' at line %d" % (t.value[0], t.lexer.lineno))
 
 
 # # EOF handling rule
@@ -293,7 +293,7 @@ literals = "(){}[];.,?:"
 #     """ empty : """
 
 def p_error(t):
-    raise Exception("Can't undersand token '" + t.value + "'")
+    raise Exception("Can't undersand token '" + str(t.value) + "'")
 
 
 def p_Block(p):

@@ -6,13 +6,19 @@ FUNCPROTO = "funcproto"
 OBJECT = "object"
 FUNCTION = "function"
 
+class StObject(dict):
+    def __init__(self):
+        ...
+
+    def __str__(self):
+        ...
 
 class StObject(dict):
     def __init__(self):
         super(StObject, self).__init__()
 
     def __str__(self):
-        ret = "{"
+        ret = "Object{"
         if len(self) > 0:
             ret += "\n"
         for k, v in self.items():
@@ -29,9 +35,6 @@ class StObject(dict):
 
 
 class Undefined(object):
-    def __init__(self):
-        pass
-
     def __str__(self):
         return "undefined"
 
@@ -56,9 +59,10 @@ NULL = StNull()
 
 class StFunction(StObject):
     def __init__(self):
-        super(StFunction, self).__init__()
+        super(StFunction, 
+            self).__init__()
         self.name = ""
-        self.ast = None  # function expression
+        self.ast = None  # code
         self.argument_list = []
         self.outFunction = None
 
@@ -94,7 +98,8 @@ class StFunction(StObject):
 
 class StActiveRecord(dict):
     def __init__(self):
-        super(StActiveRecord, self).__init__()
+        super(StActiveRecord, 
+            self).__init__()
         self.return_value = None
         self.this = None
         self.outFunction = None

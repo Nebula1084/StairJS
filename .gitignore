@@ -2,7 +2,7 @@
 *.o
 *.obj
 .idea
-*.js
+HelloWorld.js
 *.tmp
 __pycache__
 parser.out

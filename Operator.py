@@ -96,7 +96,10 @@ def additive_expression(ast, active_record):
         a1 = additive_expression(ast[1], active_record)
         a2 = multiplicative_expression(ast[3], active_record)
         if ast[2][1] == "+":
-            return a1 + a2
+            if type(a1) == str or type(a2) == str:
+                return str(a1) + str(a2)
+            else:
+                return a1 + a2
         elif ast[2][1] == "-":
             return a1 - a2
 

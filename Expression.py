@@ -38,11 +38,16 @@ def array_literal(ast, active_record):
 
 def element_list(ast, active_record, obj):
     i = 0
+    ud = True
     for child in ast:
         if isinstance(child, list) and child[0] == AssignmentExpressionNoIn:
             obj[i] = assignment_expression_no_in(child, active_record)
+            ud = False
         elif child == ',':
+            if ud:
+                obj[i] = UNDEFINED
             i += 1
+            ud = True
 
 
 def object_literal(ast, active_record):
@@ -87,14 +92,18 @@ def allocation_expression(ast, active_record):
     if owner is None:
         constructor = key
     else:
-        constructor = owner[key]
+        if key in owner:
+            constructor = owner[key]
+        else:
+            raise Exception("'" + str(key) + "' is not defined.")
     if not isinstance(constructor, StFunction):
         raise Exception(str(constructor) + " is not callable.")
     new_ar = StActiveRecord()
     new_ar.this = obj
     new_ar.outFunction = constructor.outFunction
-    arguments(ast[2], active_record, new_ar, constructor.argument_list)
-    return None, function_body(constructor.ast, new_ar)
+    arguments(ast[3], active_record, new_ar, constructor.argument_list)
+    function_body(constructor.ast, new_ar)
+    return None, obj
 
 
 def member_expression_part(ast, active_record, owner):
@@ -114,7 +123,7 @@ def call_expression(ast, active_record):
     if ast[2][0] == Arguments:
         owner, key = Engine.engine[ast[1][0]](ast[1], active_record)
         if owner is None:
-            function = key
+            raise Exception("Function must in some dict")
         elif key in owner:
             function = owner[key]
         else:
@@ -122,7 +131,10 @@ def call_expression(ast, active_record):
         if not isinstance(function, StFunction):
             raise Exception(str(function) + " is not callable.")
         new_ar = StActiveRecord()
-        new_ar.this = active_record.this
+        if owner is active_record:
+            new_ar.this = owner.this
+        else:
+            new_ar.this = owner
         new_ar.outFunction = function.outFunction
         arguments(ast[2], active_record, new_ar, function.argument_list)
         return None, function_body(function.ast, new_ar)
@@ -151,6 +163,7 @@ def argument_list(ast, active_record, new_ar, argument_names):
             arguments_value[i] = arg
             if i < len(argument_names):
                 new_ar[argument_names[i]] = arg
+                i += 1
     new_ar["arguments"] = arguments_value
 
 
@@ -192,9 +205,21 @@ def assignment_expression_no_in(ast, active_record):
             owner[key] += right_value
         elif operator == "-=":
             owner[key] -= right_value
+        elif operator == "*=":
+            owner[key] *= right_value
+        elif operator == "/=":
+            owner[key] /= right_value
+        elif operator == "%=":
+            owner[key] %= right_value
+        elif operator == "|=":
+            owner[key] |= right_value
+        elif operator == "&=":
+            owner[key] &= right_value
+        elif operator == "^=":
+            owner[key] ^= right_value
         else:
             raise Exception("Unsupport operator " + operator)
-        return right_value
+        return owner[key]
 
         # if len(ast) > 2:
         #     left = Engine.engine[ast[1][0]](ast[1], active_record)
