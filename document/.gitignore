@@ -1,0 +1,7 @@
+*.aux
+*.pdf
+*.log
+*.out
+*.toc
+*.eps
+Thumbs.db

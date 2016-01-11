@@ -31,6 +31,7 @@ if __name__ == '__main__':
         while True:
             statement = input(">>>")
             if statement.strip() == "exit":
+                print("Bye!")
                 break
             if statement.strip() == "":
                 continue
