@@ -105,7 +105,7 @@
 \tableofcontents
 \newpage
 \section{概述}
-    StairJS是用python3实现的一个较为完善的JavaScript解释器，支持了JavaScript大部分基本特性。其所能够解释的语言是JavaScipt的一个子集。StairJS实现了以下特性:
+    StairJS是用python3实现的一个较为完善的JavaScript解释器，支持了JavaScript大部分基本特性。其所能够解释的语言是JavaScipt的一个子集。在这个系统中，以我们自己的理解，尽量保持JavaScript原有的特性。如视一切皆为对象，包括函数、活动记录。一切皆为对象的思想不仅存在于这系统的设计中，而且根植于系统的实现中，这样才能最大程度地减少体制外的工作，在系统框架内部解决这些问题而尽量少地引入外部作用。而函数闭包与面向对象的实现则体现了我们对JavaScript更深一层的理解，变量如何绑定与定位是实现此特性的关键。此外，我们使用语法树的方式处理整个程序，这使得我们的语义分析变得更为清晰。目前，StairJS实现了以下特性:
     % \begin{list}{-}
     \setcounter{rowno}{0}
     \begin{list}{\therowno.}{\usecounter{rowno}\setlength{\rightmargin}{\leftmargin}}
